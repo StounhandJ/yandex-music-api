@@ -1,0 +1,18 @@
+{
+    "name": "stounhandj/yandex-music-api",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "StounhandJ\\YandexMusicApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "StounhandJ",
+            "email": "rmarinicev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
