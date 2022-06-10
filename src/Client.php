@@ -738,13 +738,13 @@ class Client
      *
      * @return mixed parsed json
      */
-//    public function usersDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
-//    {
-//        $url = $this->baseUrl . "/users/" . $this->account->uid . "/dislikes/tracks"
-//            . '?if_modified_since_revision=' . $ifModifiedSinceRevision;
-//
-//        return $this->get($url)->result->library;
-//    }
+    public function getDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
+    {
+        $url = $this->baseUrl . "/users/" . $this->getUid() . "/dislikes/tracks"
+            . '?if_modified_since_revision=' . $ifModifiedSinceRevision;
+
+        return $this->get($url)->result->library;
+    }
 
     /**
      * TODO: Описание функции
@@ -774,12 +774,12 @@ class Client
         return $this->post($url, $data)->result;
     }
 
-    public function usersDislikesTracksAdd($trackIds)
+    public function usersDislikesTracksAdd(array|int|string $trackIds)
     {
         return $this->dislikeAction($trackIds);
     }
 
-    public function usersDislikesTracksRemove($trackIds)
+    public function usersDislikesTracksRemove(array|int|string $trackIds)
     {
         return $this->dislikeAction($trackIds, true);
     }
