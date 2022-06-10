@@ -643,39 +643,39 @@ class Client
      *
      * @return mixed parsed json
      */
-//    private function getList(string $objectType, array|int|string $ids): mixed
-//    {
-//        $url = $this->baseUrl . "/" . $objectType . "s";
-//        if ($objectType == 'playlist') {
-//            $url .= "/list";
-//        }
-//
-//        $data = array(
-//            $objectType . '-ids' => $ids
-//        );
-//
-//        return $this->post($url, $data)->result;
-//    }
-//
-//    public function artists($artistIds)
-//    {
-//        return $this->getList('artist', $artistIds);
-//    }
-//
-//    public function albums($albumIds)
-//    {
-//        return $this->getList('album', $albumIds);
-//    }
-//
-//    public function tracks($trackIds)
-//    {
-//        return $this->getList('track', $trackIds);
-//    }
-//
-//    public function playlistsList($playlistIds)
-//    {
-//        return $this->getList('playlist', $playlistIds);
-//    }
+    private function getList(string $objectType, array|int|string $ids): mixed
+    {
+        $url = $this->baseUrl . "/" . $objectType . "s";
+        if ($objectType == 'playlist') {
+            $url .= "/list";
+        }
+
+        $data = array(
+            $objectType . '-ids' => $ids
+        );
+
+        return $this->post($url, $data)->result;
+    }
+
+    public function artists(array|int|string $artistIds): mixed
+    {
+        return $this->getList('artist', $artistIds);
+    }
+
+    public function albums(array|int|string $albumIds): mixed
+    {
+        return $this->getList('album', $albumIds);
+    }
+
+    public function tracks(array|int|string $trackIds): mixed
+    {
+        return $this->getList('track', $trackIds);
+    }
+
+    public function playlistsList(array|int|string $playlistIds): mixed
+    {
+        return $this->getList('playlist', $playlistIds);
+    }
 
     /**
      * TODO: Описание функции
