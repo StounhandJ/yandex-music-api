@@ -550,13 +550,13 @@ class Client
      *
      * TODO: метод не был протестирован!
      *
-     * @param string|int $artistId
+     * @param int|string $artistId
      *
      * @return mixed parsed json
      */
-    public function artistsBriefInfo($artistId)
+    public function artistsBriefInfo(int|string $artistId): mixed
     {
-        $url = $this->baseUrl . "/artists/$artistId/brief-info";
+        $url = "$this->baseUrl/artists/$artistId/brief-info";
 
         return $this->get($url)->result;
     }
