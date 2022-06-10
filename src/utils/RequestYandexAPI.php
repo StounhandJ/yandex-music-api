@@ -2,6 +2,7 @@
 
 namespace StounhandJ\YandexMusicApi\Utils;
 
+use SimpleXMLElement;
 use StounhandJ\YandexMusicApi\Config;
 
 class RequestYandexAPI
@@ -47,7 +48,7 @@ class RequestYandexAPI
         return $result;
     }
 
-    public function getXml($url): \SimpleXMLElement|bool
+    public function getXml($url): SimpleXMLElement|bool
     {
         return simplexml_load_file($url);
     }
