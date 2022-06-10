@@ -5,6 +5,7 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use StounhandJ\YandexMusicApi\Track\Track;
 use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
 
 class Client
@@ -56,7 +57,7 @@ class Client
      */
     public function queue($id): Queue\Queue
     {
-        return Queue\Queue::de_json($this->get("/queues/$id")->result, $this);
+        return new Queue\Queue($this, $this->get("/queues/$id")->result);
     }
 
     /**
@@ -660,9 +661,13 @@ class Client
         return $this->getList('album', $albumIds);
     }
 
-    public function tracks(array|int|string $trackIds): mixed
+    /**
+     *
+     * @return Track[] parsed json
+     */
+    public function tracks(array|int|string $trackIds): array
     {
-        return $this->getList('track', $trackIds);
+        return array_map(fn($value): Track => new Track($this, $value), $this->getList('track', $trackIds));
     }
 
     public function playlistsList(array|int|string $playlistIds): mixed
