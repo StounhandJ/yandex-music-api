@@ -768,7 +768,7 @@ class Client
         );
 
         $data = array(
-            'track-ids-ids' => $ids
+            'track-ids' => $ids
         );
 
         return $this->post($url, $data)->result;
