@@ -59,15 +59,9 @@ class RequestYandexAPI
      * @param string $name Название сохраняемого файла
      * @return bool|int
      */
-    public function download($url, $name)
+    public function download(string $url, string $name): bool|int
     {
-        $msg = $url;
-        if ($this->user != "") {
-            $msg .= " User: " . $this->user;
-        }
-        Logger::message($msg, "RequestYandexAPI.php", "DOWNLOAD");
-
-        return file_put_contents(dirname(__FILE__) . '/' . $name . '.mp3', fopen($url, 'r'));
+        return file_put_contents($name, fopen($url, 'r'));
     }
 
 }
