@@ -483,9 +483,9 @@ class Client
      *
      * @return mixed parsed json
      */
-    public function rotor_stations_dashboard(): mixed
+    public function rotorStationsDashboard(): mixed
     {
-        return $this->get($this->baseUrl . "/rotor/stations/dashboard")->result;
+        return $this->get("$this->baseUrl/rotor/stations/dashboard")->result;
     }
 
     /**
@@ -497,11 +497,9 @@ class Client
      *
      * @return mixed parsed json
      */
-    public function rotor_stations_list(string $lang = 'en'): mixed
+    public function rotorStationsList(string $lang = 'en'): mixed
     {
-        $url = $this->baseUrl . "/rotor/stations/list?language=" . $lang;
-
-        return $this->get($url)->result;
+        return $this->get( "$this->baseUrl/rotor/stations/list?language=$lang")->result;
     }
 
     /**
