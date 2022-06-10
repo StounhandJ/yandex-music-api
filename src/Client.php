@@ -35,23 +35,21 @@ class Client
             return $this->uid;
         }
 
-        $this->uid = $this->account_status()->account->uid;
+        $this->uid = $this->accountStatus()->account->uid;
         return $this->uid;
     }
 
-    public function account_settings()
+    public function accountSettings(): mixed
     {
-        return $this->get($this->baseUrl . "/account/settings");
+        return $this->get("$this->baseUrl /account/settings");
     }
 
     /**
      * @return array decoded json
      */
-    public function queues_list(): array
+    public function queuesList(): array
     {
-        $url = $this->baseUrl . "/queues";
-
-        return Queue\QueueItem::de_list($this->get($url)->result["queues"], $this);
+        return Queue\QueueItem::de_list($this->get("$this->baseUrl/queues")->result->queues, $this);
     }
 
     /**
@@ -59,9 +57,7 @@ class Client
      */
     public function queue($id): Queue\Queue
     {
-        $url = $this->baseUrl . "/queues/" . $id;
-
-        return Queue\Queue::de_json($this->get($url)->result, $this);
+        return Queue\Queue::de_json($this->get("$this->baseUrl/queues/$id")->result, $this);
     }
 
     /**
@@ -69,18 +65,14 @@ class Client
      *
      * @return mixed decoded json
      */
-    public function account_status(): mixed
+    public function accountStatus(): mixed
     {
-        $url = $this->baseUrl . "/account/status";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/account/status")->result;
     }
 
-    public function rotor_account_status(): mixed
+    public function rotorAccountStatus(): mixed
     {
-        $url = $this->baseUrl . "/rotor/account/status";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/rotor/account/status")->result;
     }
 
     /**
@@ -88,11 +80,9 @@ class Client
      *
      * @return array decoded json
      */
-    public function permission_alerts(): array
+    public function permissionAlerts(): array
     {
-        $url = $this->baseUrl . "/permission-alerts";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/permission-alerts")->result;
     }
 
     /**
@@ -100,11 +90,9 @@ class Client
      *
      * @return array decoded json
      */
-    public function account_experiments(): array
+    public function accountExperiments(): array
     {
-        $url = $this->baseUrl . "/account/experiments";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/account/experiments")->result;
     }
 
     /**
@@ -115,16 +103,12 @@ class Client
      */
     public function feed(): array
     {
-        $url = $this->baseUrl . "/feed";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/feed")->result;
     }
 
-    public function feed_wizard_is_passed(): bool
+    public function feedWizardIsPassed(): bool
     {
-        $url = $this->baseUrl . "/feed/wizard/is-passed";
-
-        return $this->get($url)->result["isWizardPassed"] ?? false;
+        return $this->get("$this->baseUrl/feed/wizard/is-passed")->result->isWizardPassed ?? false;
     }
 
     /**
@@ -138,9 +122,9 @@ class Client
      *
      * @return mixed parsed json
      */
-    public function landing(array|string $blocks): array
+    public function landing(array|string $blocks): mixed
     {
-        $url = $this->baseUrl . "/landing3?blocks=";
+        $url = "$this->baseUrl/landing3?blocks=";
 
         if (is_array($blocks)) {
             $url .= implode(',', $blocks);
@@ -150,7 +134,7 @@ class Client
 
         $response = $this->get($url);
         if ($response->result == null) {
-            $response = $response["error"];
+            $response = $response->error;
         } else {
             $response = $response->result;
         }
@@ -165,9 +149,7 @@ class Client
      */
     public function genres(): array
     {
-        $url = $this->baseUrl . "/genres";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/genres")->result;
     }
 
     /**
@@ -176,12 +158,12 @@ class Client
      * @param int|string $trackId Уникальный идентификатор трека
      * @param bool $getDirectLinks Получить ли при вызове метода прямую ссылку на загрузку
      *
-     * @return mixed parsed json
+     * @return array parsed json
      */
-    public function tracks_download_info(int|string $trackId, bool $getDirectLinks = false): mixed
+    public function tracksDownloadInfo(int|string $trackId, bool $getDirectLinks = false): array
     {
         $result = array();
-        $url = $this->baseUrl . "/tracks/$trackId/download-info";
+        $url = "$this->baseUrl/tracks/$trackId/download-info";
 
         $response = $this->get($url);
         if ($response->result == null) {
@@ -235,41 +217,41 @@ class Client
      *
      * TODO: метод не был протестирован!
      *
-     * @param string|int $trackId Уникальный идентификатор трека
+     * @param int|string $trackId Уникальный идентификатор трека
      * @param string $from Наименования клиента
-     * @param string|int $albumId Уникальный идентификатор альбома
-     * @param int $playlistId Уникальный идентификатор плейлиста, если таковой прослушивается.
+     * @param int|string $albumId Уникальный идентификатор альбома
+     * @param int|null $playlistId Уникальный идентификатор плейлиста, если таковой прослушивается.
      * @param bool $fromCache Проигрывается ли трек с кеша
-     * @param string $playId Уникальный идентификатор проигрывания
+     * @param string|null $playId Уникальный идентификатор проигрывания
      * @param int $trackLengthSeconds Продолжительность трека в секундах
      * @param int $totalPlayedSeconds Сколько было всего воспроизведено трека в секундах
      * @param int $endPositionSeconds Окончательное значение воспроизведенных секунд
-     * @param string $client_now Текущая дата и время клиента в ISO
+     * @param string|null $client_now Текущая дата и время клиента в ISO
      *
      * @return boolean
      *
      * @throws Exception
      */
     private function playAudio(
-        $trackId,
-        $from,
-        $albumId,
-        $playlistId = null,
-        $fromCache = false,
-        $playId = null,
-        $trackLengthSeconds = 0,
-        $totalPlayedSeconds = 0,
-        $endPositionSeconds = 0,
-        $client_now = null
-    ) {
-        $url = $this->baseUrl . "/play-audio";
+        int|string $trackId,
+        string $from,
+        int|string $albumId,
+        int $playlistId = null,
+        bool $fromCache = false,
+        string $playId = null,
+        int $trackLengthSeconds = 0,
+        int $totalPlayedSeconds = 0,
+        int $endPositionSeconds = 0,
+        string $client_now = null
+    ): bool {
+        $url = "$this->baseUrl/play-audio";
 
         $data = array(
             'track-id' => $trackId,
             'from-cache' => $fromCache,
             'from' => $from,
             'play-id' => $playId,
-            'uid' => $this->account->uid,
+            'uid' => $this->getUid(),
             'timestamp' => (new DateTime())->format(DateTime::ATOM),
             'track-length-seconds' => $trackLengthSeconds,
             'total-played-seconds' => $totalPlayedSeconds,
@@ -289,11 +271,9 @@ class Client
      *
      * @return mixed parsed json
      */
-    public function albums_with_tracks(int|string $albumId): mixed
+    public function albumsWithTracks(int|string $albumId): mixed
     {
-        $url = $this->baseUrl . "/albums/$albumId/with-tracks";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/albums/$albumId/with-tracks")->result;
     }
 
     /**
@@ -331,11 +311,9 @@ class Client
      *
      * @return mixed parsed json
      */
-    public function search_suggest(string $part): mixed
+    public function searchSuggest(string $part): mixed
     {
-        $url = $this->baseUrl . "/search/suggest?part=$part";
-
-        return $this->get($url)->result;
+        return $this->get("$this->baseUrl/search/suggest?part=$part")->result;
     }
 
     /**
