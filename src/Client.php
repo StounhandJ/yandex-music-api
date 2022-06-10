@@ -5,7 +5,6 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use StounhandJ\YandexMusicApi\Queue\QueueItem;
 use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
 
 class Client
@@ -41,7 +40,7 @@ class Client
 
     public function accountSettings(): mixed
     {
-        return $this->get("$this->baseUrl /account/settings");
+        return $this->get("/account/settings");
     }
 
     /**
@@ -49,7 +48,7 @@ class Client
      */
     public function queuesList(): array
     {
-        return Queue\QueueItem::de_list($this->get("$this->baseUrl/queues")->result->queues, $this);
+        return Queue\QueueItem::de_list($this->get("/queues")->result->queues, $this);
     }
 
     /**
@@ -57,7 +56,7 @@ class Client
      */
     public function queue($id): Queue\Queue
     {
-        return Queue\Queue::de_json($this->get("$this->baseUrl/queues/$id")->result, $this);
+        return Queue\Queue::de_json($this->get("/queues/$id")->result, $this);
     }
 
     /**
@@ -67,12 +66,12 @@ class Client
      */
     public function accountStatus(): mixed
     {
-        return $this->get("$this->baseUrl/account/status")->result;
+        return $this->get("/account/status")->result;
     }
 
     public function rotorAccountStatus(): mixed
     {
-        return $this->get("$this->baseUrl/rotor/account/status")->result;
+        return $this->get("/rotor/account/status")->result;
     }
 
     /**
@@ -82,7 +81,7 @@ class Client
      */
     public function permissionAlerts(): array
     {
-        return $this->get("$this->baseUrl/permission-alerts")->result;
+        return $this->get("/permission-alerts")->result;
     }
 
     /**
@@ -92,7 +91,7 @@ class Client
      */
     public function accountExperiments(): array
     {
-        return $this->get("$this->baseUrl/account/experiments")->result;
+        return $this->get("/account/experiments")->result;
     }
 
     /**
@@ -103,12 +102,12 @@ class Client
      */
     public function feed(): array
     {
-        return $this->get("$this->baseUrl/feed")->result;
+        return $this->get("/feed")->result;
     }
 
     public function feedWizardIsPassed(): bool
     {
-        return $this->get("$this->baseUrl/feed/wizard/is-passed")->result->isWizardPassed ?? false;
+        return $this->get("/feed/wizard/is-passed")->result->isWizardPassed ?? false;
     }
 
     /**
@@ -124,7 +123,7 @@ class Client
      */
     public function landing(array|string $blocks): mixed
     {
-        $url = "$this->baseUrl/landing3?blocks=";
+        $url = "/landing3?blocks=";
 
         if (is_array($blocks)) {
             $url .= implode(',', $blocks);
@@ -149,7 +148,7 @@ class Client
      */
     public function genres(): array
     {
-        return $this->get("$this->baseUrl/genres")->result;
+        return $this->get("/genres")->result;
     }
 
     /**
@@ -163,7 +162,7 @@ class Client
     public function tracksDownloadInfo(int|string $trackId, bool $getDirectLinks = false): array
     {
         $result = array();
-        $url = "$this->baseUrl/tracks/$trackId/download-info";
+        $url = "/tracks/$trackId/download-info";
 
         $response = $this->get($url);
         if ($response->result == null) {
@@ -244,7 +243,7 @@ class Client
         int $endPositionSeconds = 0,
         string $client_now = null
     ): bool {
-        $url = "$this->baseUrl/play-audio";
+        $url = "/play-audio";
 
         $data = array(
             'track-id' => $trackId,
@@ -273,7 +272,7 @@ class Client
      */
     public function albumsWithTracks(int|string $albumId): mixed
     {
-        return $this->get("$this->baseUrl/albums/$albumId/with-tracks")->result;
+        return $this->get("/albums/$albumId/with-tracks")->result;
     }
 
     /**
@@ -313,7 +312,7 @@ class Client
      */
     public function searchSuggest(string $part): mixed
     {
-        return $this->get("$this->baseUrl/search/suggest?part=$part")->result;
+        return $this->get("/search/suggest?part=$part")->result;
     }
 
     /**
@@ -332,7 +331,7 @@ class Client
             $userId = $this->getUid();
         }
 
-        $url = "$this->baseUrl/users/$userId/playlists";
+        $url = "/users/$userId/playlists";
 
         $data = array(
             'kind' => $kind
@@ -352,8 +351,7 @@ class Client
     public function usersPlaylistsCreate(string $title, string $visibility = 'public'): mixed
     {
         $url = sprintf(
-            "%s/users/%s/playlists/create",
-            $this->baseUrl,
+            "/users/%s/playlists/create",
             $this->getUid()
         );
 
@@ -375,8 +373,7 @@ class Client
     public function usersPlaylistsDelete(int|string $kind): mixed
     {
         $url = sprintf(
-            "%s/users/%s/playlists/%s/delete",
-            $this->baseUrl,
+            "/users/%s/playlists/%s/delete",
             $this->getUid(),
             $kind
         );
@@ -395,8 +392,7 @@ class Client
     public function usersPlaylistsNameChange(int|string $kind, string $name): mixed
     {
         $url = sprintf(
-            "%s/users/%s/playlists/%s/name",
-            $this->baseUrl,
+            "/users/%s/playlists/%s/name",
             $this->getUid(),
             $kind
         );
@@ -422,8 +418,7 @@ class Client
     private function usersPlaylistsChange(int|string $kind, string $diff, int $revision = 1): mixed
     {
         $url = sprintf(
-            "%s/users/%s/playlists/%s/change",
-            $this->baseUrl,
+            "/users/%s/playlists/%s/change",
             $this->getUid(),
             $kind
         );
@@ -482,7 +477,7 @@ class Client
      */
     public function rotorStationsDashboard(): mixed
     {
-        return $this->get("$this->baseUrl/rotor/stations/dashboard")->result;
+        return $this->get("/rotor/stations/dashboard")->result;
     }
 
     /**
@@ -496,7 +491,7 @@ class Client
      */
     public function rotorStationsList(string $lang = 'en'): mixed
     {
-        return $this->get("$this->baseUrl/rotor/stations/list?language=$lang")->result;
+        return $this->get("/rotor/stations/list?language=$lang")->result;
     }
 
     /**
@@ -551,7 +546,7 @@ class Client
      */
     public function artistsBriefInfo(int|string $artistId): mixed
     {
-        $url = "$this->baseUrl/artists/$artistId/brief-info";
+        $url = "/artists/$artistId/brief-info";
 
         return $this->get($url)->result;
     }
@@ -572,8 +567,7 @@ class Client
         $action = $remove ? 'remove' : 'add-multiple';
 
         $url = sprintf(
-            "%s/users/%s/likes/%ss/%s",
-            $this->baseUrl,
+            "/users/%s/likes/%ss/%s",
             $this->getUid(),
             $objectType,
             $action
@@ -641,8 +635,7 @@ class Client
     private function getList(string $objectType, array|int|string $ids): mixed
     {
         $url = sprintf(
-            "%s/%ss",
-            $this->baseUrl,
+            "/%ss",
             $objectType
         );
 
@@ -687,8 +680,7 @@ class Client
     public function usersPlaylistsList(): mixed
     {
         $url = sprintf(
-            "%s/users/%s/playlists/list",
-            $this->baseUrl,
+            "/users/%s/playlists/list",
             $this->getUid()
         );
 
@@ -705,8 +697,7 @@ class Client
     private function getLikes(string $objectType): mixed
     {
         $url = sprintf(
-            "%s/users/%s/likes/%ss",
-            $this->baseUrl,
+            "/users/%s/likes/%ss",
             $this->getUid(),
             $objectType
         );
@@ -746,8 +737,7 @@ class Client
     public function getDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
     {
         $url = sprintf(
-            "%s/users/%s/dislikes/tracks?if_modified_since_revision=%s",
-            $this->baseUrl,
+            "/users/%s/dislikes/tracks?if_modified_since_revision=%s",
             $this->getUid(),
             $ifModifiedSinceRevision
         );
@@ -770,8 +760,7 @@ class Client
         $action = $remove ? 'remove' : 'add-multiple';
 
         $url = sprintf(
-            "%s/users/%s/dislikes/tracks/%s",
-            $this->baseUrl,
+            "/users/%s/dislikes/tracks/%s",
             $this->getUid(),
             $action
         );
@@ -795,12 +784,14 @@ class Client
 
     private function post($url, $data = null): mixed
     {
-        return json_decode($this->requestYandexAPI->post($url, $data));
+        return json_decode($this->requestYandexAPI->post($this->baseUrl . $url, $data));
     }
 
     private function get($url): mixed
     {
-        return json_decode($this->requestYandexAPI->get($url));
+        return json_decode(
+            $this->requestYandexAPI->get($this->baseUrl . $url)
+        );
     }
 }
 
