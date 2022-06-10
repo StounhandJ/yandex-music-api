@@ -16,7 +16,7 @@ class QueueItem
         public array $context,
         public string $modified,
         public string $id,
-        public Client $client
+        public Client $client,
     ) {
     }
 

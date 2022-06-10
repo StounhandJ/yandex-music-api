@@ -12,40 +12,39 @@ class RequestYandexAPI
     ) {
     }
 
-    public function post($url, $data)
+    public function post(string $url, array $data): string
     {
-//        $msg = $url;
-//        if ($this->user != "") {
-//            $msg .= " User: " . $this->user;
-//        }
-//        Logger::message($msg, "RequestYandexAPI.php", "POST");
-//
-//        $query = http_build_query($data);
-//
-//        $opts = array(
-//            'http' =>
-//                array(
-//                    'method' => 'POST',
-//                    'header' => $this->headers,
-//                    'content' => $query
-//                )
-//        );
-//        $context = stream_context_create($opts);
-//
-//        return file_get_contents($url, false, $context);
-        return "{}";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->dataToPostString($data));
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response ?: "";
     }
 
-    public function get($url): string
+    public function get(string $url): string
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
-        $html = curl_exec($ch);
+        $response = curl_exec($ch);
         curl_close($ch);
 
-        return $html ?: "";
+        return $response ?: "";
+    }
+
+    private function dataToPostString(array $data): string
+    {
+        $result = "";
+        foreach ($data as $name => $value) {
+            $result .= "$name=$value";
+        }
+        return $result;
     }
 
     public function getXml($url)
