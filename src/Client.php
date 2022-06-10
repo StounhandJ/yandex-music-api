@@ -567,68 +567,68 @@ class Client
      * TODO: метод не был протестирован!
      *
      * @param string $objectType
-     * @param string|int|array $ids
+     * @param array|int|string $ids
      * @param bool $remove
      *
      * @return mixed parsed json
      */
-    private function likeAction($objectType, $ids, $remove = false)
+    private function likeAction(string $objectType, array|int|string $ids, bool $remove = false): mixed
     {
-        $action = 'add-multiple';
-        if ($remove) {
-            $action = 'remove';
-        }
-        $url = $this->baseUrl . "/users/" . $this->account->uid . "/likes/" . $objectType . "s/$action";
+        $action = $remove ? 'remove' : 'add-multiple';
+
+        $url = sprintf(
+            "%s/users/%s/likes/%ss/%s",
+            $this->baseUrl,
+            $this->getUid(),
+            $objectType,
+            $action
+        );
 
         $data = array(
-            $objectType . '-ids' => $ids
+            "$objectType-ids" => $ids
         );
 
         $response = $this->post($url, $data)->result;
 
-        if ($objectType == 'track') {
-            $response = $response->revision;
-        }
-
-        return $response;
+        return $objectType == 'track' ? $response->revision : $response;
     }
 
-    public function usersLikesTracksAdd($trackIds)
+    public function usersLikesTracksAdd(array|int|string $trackIds): mixed
     {
         return $this->likeAction('track', $trackIds);
     }
 
-    public function usersLikesTracksRemove($trackIds)
+    public function usersLikesTracksRemove(array|int|string $trackIds): mixed
     {
         return $this->likeAction('track', $trackIds, true);
     }
 
-    public function usersLikesArtistsAdd($artistIds)
+    public function usersLikesArtistsAdd(array|int|string $artistIds): mixed
     {
         return $this->likeAction('artist', $artistIds);
     }
 
-    public function usersLikesArtistsRemove($artistIds)
+    public function usersLikesArtistsRemove(array|int|string $artistIds): mixed
     {
         return $this->likeAction('artist', $artistIds, true);
     }
 
-    public function usersLikesPlaylistsAdd($playlistIds)
+    public function usersLikesPlaylistsAdd(array|int|string $playlistIds): mixed
     {
         return $this->likeAction('playlist', $playlistIds);
     }
 
-    public function usersLikesPlaylistsRemove($playlistIds)
+    public function usersLikesPlaylistsRemove(array|int|string $playlistIds): mixed
     {
         return $this->likeAction('playlist', $playlistIds, true);
     }
 
-    public function usersLikesAlbumsAdd($albumIds)
+    public function usersLikesAlbumsAdd(array|int|string $albumIds): mixed
     {
         return $this->likeAction('album', $albumIds);
     }
 
-    public function usersLikesAlbumsRemove($albumIds)
+    public function usersLikesAlbumsRemove(array|int|string $albumIds): mixed
     {
         return $this->likeAction('album', $albumIds, true);
     }
@@ -645,7 +645,12 @@ class Client
      */
     private function getList(string $objectType, array|int|string $ids): mixed
     {
-        $url = $this->baseUrl . "/" . $objectType . "s";
+        $url = sprintf(
+            "%s/%ss",
+            $this->baseUrl,
+            $objectType
+        );
+
         if ($objectType == 'playlist') {
             $url .= "/list";
         }
@@ -686,7 +691,11 @@ class Client
      */
     public function usersPlaylistsList(): mixed
     {
-        $url = $this->baseUrl . "/users/" . $this->getUid() . "/playlists/list";
+        $url = sprintf(
+            "%s/users/%s/playlists/list",
+            $this->baseUrl,
+            $this->getUid()
+        );
 
         return $this->get($url)->result;
     }
@@ -700,15 +709,16 @@ class Client
      */
     private function getLikes(string $objectType): mixed
     {
-        $url = $this->baseUrl . "/users/" . $this->getUid() . "/likes/" . $objectType . "s";
+        $url = sprintf(
+            "%s/users/%s/likes/%ss",
+            $this->baseUrl,
+            $this->getUid(),
+            $objectType
+        );
 
         $response = $this->get($url)->result;
 
-        if ($objectType == "track") {
-            return $response->library;
-        }
-
-        return $response;
+        return $objectType == "track" ? $response->library : $response;
     }
 
     public function getLikesTracks()
@@ -740,8 +750,12 @@ class Client
      */
     public function getDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
     {
-        $url = $this->baseUrl . "/users/" . $this->getUid() . "/dislikes/tracks"
-            . '?if_modified_since_revision=' . $ifModifiedSinceRevision;
+        $url = sprintf(
+            "%s/users/%s/dislikes/tracks?if_modified_since_revision=%s",
+            $this->baseUrl,
+            $this->getUid(),
+            $ifModifiedSinceRevision
+        );
 
         return $this->get($url)->result->library;
     }
