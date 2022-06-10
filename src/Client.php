@@ -684,12 +684,12 @@ class Client
      *
      * @return mixed parsed json
      */
-//    public function users_playlists_list(): mixed
-//    {
-//        $url = $this->baseUrl . "/users/" . $this->account->uid . "/playlists/list";
-//
-//        return $this->get($url)->result;
-//    }
+    public function usersPlaylistsList(): mixed
+    {
+        $url = $this->baseUrl . "/users/" . $this->getUid() . "/playlists/list";
+
+        return $this->get($url)->result;
+    }
 
     /**
      * Получения списка лайков
