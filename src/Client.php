@@ -519,31 +519,31 @@ class Client
      *
      * @throws Exception
      */
-//    public function rotorStationGenreFeedback(
-//        string $genre,
-//        string $type,
-//        string $from = null,
-//        int|string $batchId = null,
-//        string $trackId = null): mixed
-//    {
-//        $url = $this->baseUrl . "/rotor/station/genre:$genre/feedback";
-//        if ($batchId != null) {
-//            $url .= "?batch-id=" . $batchId;
-//        }
-//
-//        $data = array(
-//            'type' => $type,
-//            'timestamp' => (new DateTime())->format(DateTimeInterface::ATOM)
-//        );
-//        if ($from != null) {
-//            $data['from'] = $from;
-//        }
-//        if ($trackId != null) {
-//            $data['trackId'] = $trackId;
-//        }
-//
-//        return $this->post($url, $data)->result;
-//    }
+    public function rotorStationGenreFeedback(
+        string $genre,
+        string $type,
+        string $from = null,
+        int|string $batchId = null,
+        string $trackId = null): mixed
+    {
+        $url = $this->baseUrl . "/rotor/station/genre:$genre/feedback";
+        if ($batchId != null) {
+            $url .= "?batch-id=" . $batchId;
+        }
+
+        $data = array(
+            'type' => $type,
+            'timestamp' => (new DateTime())->format(DateTimeInterface::ATOM)
+        );
+        if ($from != null) {
+            $data['from'] = $from;
+        }
+        if ($trackId != null) {
+            $data['trackId'] = $trackId;
+        }
+
+        return $this->post($url, $data)->result;
+    }
 
     /**
      * TODO: Описание функции
