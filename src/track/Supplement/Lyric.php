@@ -6,9 +6,9 @@ use StounhandJ\YandexMusicApi\JSONObject;
 
 class Lyric extends JSONObject
 {
-    public string $id;
-    public string $lyrics;
-    public string $fullLyrics;
-    public bool $hasRights;
-    public bool $showTranslation;
+    public string $id = "";
+    public string $lyrics = "";
+    public string $fullLyrics = "";
+    public bool $hasRights = false;
+    public bool $showTranslation = false;
 }

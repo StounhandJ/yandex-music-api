@@ -799,8 +799,8 @@ class Client
         );
         $result = $this->get($url)->result;
         return new Supplement(
-            new Lyric($this, $result->lyrics),
-            array_map(fn($value): Video => new Video($this, $value), $result->videos)
+            new Lyric($this, $result->lyrics ?? null),
+            array_map(fn($value): Video => new Video($this, $value), $result->videos ?? [])
         );
     }
 
