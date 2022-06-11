@@ -53,7 +53,7 @@ class Client
      */
     public function queuesList(): array
     {
-        return Queue::de_list($this, $this->get("/queues")->result->queues);
+        return Queue::deList($this, $this->get("/queues")->result->queues);
     }
 
     /**

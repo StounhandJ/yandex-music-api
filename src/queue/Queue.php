@@ -5,6 +5,7 @@ namespace StounhandJ\YandexMusicApi\Queue;
 use stdClass;
 use StounhandJ\YandexMusicApi\Client;
 use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Track\Track;
 
 class Queue extends JSONObject
 {
@@ -16,13 +17,17 @@ class Queue extends JSONObject
 
     /**
      * @param bool $force
-     * @return array
+     * @return Track[]
      */
     public function getTracks(bool $force = false): array
     {
         if ($force || !isset($this->tracks)) {
             $queue = $this->client->queue($this->id);
             $this->tracks = $queue->getTracks();
+        }
+
+        if (count($this->tracks) > 0 && !($this->tracks[0] instanceof Track)) {
+            $this->tracks = Track::deList($this->client, $this->tracks);
         }
 
         return $this->tracks;
@@ -47,7 +52,7 @@ class Queue extends JSONObject
      * @param array|stdClass $json
      * @return Queue[]
      */
-    public static function de_list(Client $client, array|stdClass $json): array
+    public static function deList(Client $client, array|stdClass $json): array
     {
         return array_map(fn($value): Queue => new Queue($client, $value), $json);
     }
