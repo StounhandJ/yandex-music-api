@@ -19,6 +19,9 @@ class JSONObject
     protected function set($data): void
     {
         foreach ($data as $key => $value) {
+            if ($value instanceof \stdClass) {
+                $value = json_decode(json_encode($value), true);
+            }
             $this->{$key} = $value;
         }
     }

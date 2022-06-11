@@ -5,6 +5,7 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use StounhandJ\YandexMusicApi\Queue\Queue;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
 use StounhandJ\YandexMusicApi\Track\Supplement\Video;
@@ -48,19 +49,19 @@ class Client
     }
 
     /**
-     * @return array decoded json
+     * @return Queue[] decoded json
      */
     public function queuesList(): array
     {
-        return Queue\QueueItem::de_list($this->get("/queues")->result->queues, $this);
+        return Queue::de_list($this, $this->get("/queues")->result->queues);
     }
 
     /**
-     * @return Queue\Queue decoded json
+     * @return Queue decoded json
      */
-    public function queue($id): Queue\Queue
+    public function queue($id): Queue
     {
-        return new Queue\Queue($this, $this->get("/queues/$id")->result);
+        return new Queue($this, $this->get("/queues/$id")->result);
     }
 
     /**
