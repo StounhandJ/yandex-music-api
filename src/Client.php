@@ -5,6 +5,9 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
+use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
+use StounhandJ\YandexMusicApi\Track\Supplement\Video;
 use StounhandJ\YandexMusicApi\Track\Track;
 use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
 
@@ -785,6 +788,19 @@ class Client
     public function usersDislikesTracksRemove(array|int|string $trackIds)
     {
         return $this->dislikeAction($trackIds, true);
+    }
+
+    public function trackSupplement(int|string $trackId): Supplement
+    {
+        $url = sprintf(
+            "/tracks/%s/supplement",
+            $trackId,
+        );
+        $result = $this->get($url)->result;
+        return new Supplement(
+            new Lyric($this, $result->lyrics),
+            array_map(fn($value): Video => new Video($this, $value), $result->videos)
+        );
     }
 
     private function post($url, $data = null): mixed
