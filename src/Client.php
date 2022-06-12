@@ -5,6 +5,8 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use stdClass;
+use StounhandJ\YandexMusicApi\Account\AccountSetting;
+use StounhandJ\YandexMusicApi\Account\AccountStatus;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Queue\Queue;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
@@ -17,7 +19,7 @@ class Client
 {
     public Config $config;
     private RequestYandexAPI $requestYandexAPI;
-    private int $uid = -1;
+    private AccountStatus $accountStatus;
 
     /**
      * Client constructor.
@@ -40,21 +42,33 @@ class Client
      */
     public function getUid(): int
     {
-        if ($this->uid != -1) {
-            return $this->uid;
+        if (!isset($accountStatus)) {
+            $this->accountStatus = $this->accountStatus();
         }
 
-        $this->uid = $this->accountStatus()->account->uid;
-        return $this->uid;
+        return $this->accountStatus->account->uid;
     }
 
     /**
-     * @return mixed
+     * Returns information about the current account setting
+     *
+     * @return AccountSetting
      * @throws YandexMusicException
      */
-    public function accountSettings(): mixed
+    public function accountSettings(): AccountSetting
     {
-        return $this->get("/account/settings");
+        return new AccountSetting($this, $this->get("/account/settings")->result);
+    }
+
+    /**
+     * Получение статуса аккаунта
+     *
+     * @return AccountStatus decoded json
+     * @throws YandexMusicException
+     */
+    public function accountStatus(): AccountStatus
+    {
+        return new AccountStatus($this, $this->get("/account/status")->result);
     }
 
     /**
@@ -74,17 +88,6 @@ class Client
     public function queue($id): Queue
     {
         return new Queue($this, $this->get("/queues/$id")->result);
-    }
-
-    /**
-     * Получение статуса аккаунта
-     *
-     * @return mixed decoded json
-     * @throws YandexMusicException
-     */
-    public function accountStatus(): mixed
-    {
-        return $this->get("/account/status")->result;
     }
 
     /**
