@@ -25,6 +25,8 @@ class RequestYandexAPI
      */
     public function post(string $url, array $data): string
     {
+        $data = $this->dataNormalization($data);
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -49,6 +51,23 @@ class RequestYandexAPI
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
 
         return $this->getContent($ch);
+    }
+
+    private function dataNormalization(array $data): array
+    {
+        $result = [];
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof \stdClass) {
+                $value = json_decode(json_encode($value), true);
+            }
+            if (is_array($value)) {
+                $value = implode(",", $value);
+            }
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 
     /**

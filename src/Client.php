@@ -696,6 +696,8 @@ class Client
     }
 
     /**
+     * Getting a list of objects by IDs
+     *
      * @param string $objectType
      * @param array|int|string $ids
      *
@@ -721,26 +723,31 @@ class Client
     }
 
     /**
+     * Getting artists by IDs
+     *
      * @param array|int|string $artistIds
-     * @return mixed
+     * @return Artist[]
      * @throws YandexMusicException
      */
-    public function artists(array|int|string $artistIds): mixed
+    public function artists(array|int|string $artistIds): array
     {
-        return $this->getList('artist', $artistIds);
+        return Artist::deList($this, $this->getList('artist', $artistIds));
     }
 
     /**
+     * Getting albums by IDs
+     *
      * @param array|int|string $albumIds
-     * @return mixed
+     * @return Album[]
      * @throws YandexMusicException
      */
-    public function albums(array|int|string $albumIds): mixed
+    public function albums(array|int|string $albumIds): array
     {
-        return $this->getList('album', $albumIds);
+        return Album::deList($this, $this->getList('album', $albumIds));
     }
 
     /**
+     * Getting tracks by IDs
      *
      * @param array|int|string $trackIds
      * @return Track[] parsed json
@@ -748,10 +755,12 @@ class Client
      */
     public function tracks(array|int|string $trackIds): array
     {
-        return array_map(fn($value): Track => new Track($this, $value), $this->getList('track', $trackIds));
+        return Track::deList($this, $this->getList('track', $trackIds));
     }
 
     /**
+     * Getting playlists by IDs
+     *
      * @param array|int|string $playlistIds
      * @return mixed
      * @throws YandexMusicException
@@ -762,17 +771,19 @@ class Client
     }
 
     /**
-     * @return mixed parsed json
+     * Getting personal user playlists
+     *
+     * @return Playlist[]
      * @throws YandexMusicException
      */
-    public function usersPlaylistsList(): mixed
+    public function usersPlaylistsList(): array
     {
         $url = sprintf(
             "/users/%s/playlists/list",
             $this->getUid()
         );
 
-        return $this->get($url)->result;
+        return Playlist::deList($this, $this->get($url)->result);
     }
 
     /**
