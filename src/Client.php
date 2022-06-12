@@ -8,7 +8,10 @@ use stdClass;
 use StounhandJ\YandexMusicApi\Account\AccountSetting;
 use StounhandJ\YandexMusicApi\Account\AccountStatus;
 use StounhandJ\YandexMusicApi\Account\RotorAccountStatus;
+use StounhandJ\YandexMusicApi\Album\Album;
+use StounhandJ\YandexMusicApi\Artist\Artist;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
+use StounhandJ\YandexMusicApi\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Queue\Queue;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
@@ -773,14 +776,14 @@ class Client
     }
 
     /**
-     * Получения списка лайков
+     * Getting the objects you like
      *
      * @param string $objectType track, album, artist, playlist
      *
-     * @return mixed decoded json
+     * @return array decoded json
      * @throws YandexMusicException
      */
-    private function getLikes(string $objectType): mixed
+    private function getLikes(string $objectType): array
     {
         $url = sprintf(
             "/users/%s/likes/%ss",
@@ -794,50 +797,61 @@ class Client
     }
 
     /**
-     * @return mixed
+     * Getting tracks you like
+     *
+     * @return Track[]
      * @throws YandexMusicException
      */
-    public function getLikesTracks(): mixed
+    public function getLikesTracks(): array
     {
-        return $this->getLikes('track');
+        return Track::deList($this, $this->getLikes('track'));
     }
 
     /**
-     * @return mixed
+     * Getting the albums you like
+     *
+     * @return Album[]
      * @throws YandexMusicException
      */
-    public function getLikesAlbums(): mixed
+    public function getLikesAlbums(): array
     {
-        return $this->getLikes('album');
+        return Album::deList($this, $this->getLikes('album'));
     }
 
     /**
-     * @return mixed
+     * Getting the artists you like
+     *
+     * @return Artist[]
      * @throws YandexMusicException
      */
-    public function getLikesArtists(): mixed
+    public function getLikesArtists(): array
     {
-        return $this->getLikes('artist');
+        return Artist::deList($this, $this->getLikes('artist'));
     }
 
     /**
-     * @return mixed
+     * Getting playlists you like
+     *
+     * @return Playlist[]
      * @throws YandexMusicException
      */
-    public function getLikesPlaylists(): mixed
+    public function getLikesPlaylists(): array
     {
-        return $this->getLikes('playlist');
+        return Playlist::deList(
+            $this,
+            array_map(fn($v): stdClass => $v->playlist, $this->getLikes('playlist'))
+        );
     }
 
     /**
-     * TODO: Описание функции
+     * Getting tracks you don't like
      *
      * @param int $ifModifiedSinceRevision
      *
-     * @return mixed parsed json
+     * @return Track[]
      * @throws YandexMusicException
      */
-    public function getDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
+    public function getDislikesTracks(int $ifModifiedSinceRevision = 0): array
     {
         $url = sprintf(
             "/users/%s/dislikes/tracks?if_modified_since_revision=%s",
@@ -845,7 +859,7 @@ class Client
             $ifModifiedSinceRevision
         );
 
-        return $this->get($url)->result->library;
+        return Track::deList($this, $this->get($url)->result->library->tracks);
     }
 
     /**
