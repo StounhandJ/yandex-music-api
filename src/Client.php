@@ -365,15 +365,15 @@ class Client
     }
 
     /**
-     * Получение плейлиста или списка плейлистов по уникальным идентификаторам
+     * Getting a playlist or playlist list by unique identifiers
      *
-     * @param array|int|string $kind Уникальный идентификатор плейлиста
-     * @param int|null $userId Уникальный идентификатор пользователя владеющего плейлистом
+     * @param array|int|string $kind The unique ID of the user's playlist
+     * @param int|null $userId The unique ID of the user who owns the playlist
      *
-     * @return stdClass parsed json
+     * @return Playlist[]
      * @throws YandexMusicException
      */
-    public function usersPlaylists(array|int|string $kind, int $userId = null): stdClass
+    public function usersPlaylists(array|int|string $kind, int $userId = null): array
     {
         if ($userId == null) {
             $userId = $this->getUid();
@@ -382,22 +382,22 @@ class Client
         $url = "/users/$userId/playlists";
 
         $data = array(
-            'kind' => $kind
+            'kinds' => $kind
         );
 
-        return $this->post($url, $data);
+        return Playlist::deList($this, $this->post($url, $data)->result);
     }
 
     /**
-     * Создание плейлиста
+     * Creating a playlist
      *
-     * @param string $title Название
-     * @param string $visibility Модификатор доступа
+     * @param string $title Title
+     * @param string $visibility Access Modifier (public, private)
      *
-     * @return mixed parsed json
+     * @return Playlist
      * @throws YandexMusicException
      */
-    public function usersPlaylistsCreate(string $title, string $visibility = 'public'): mixed
+    public function usersPlaylistsCreate(string $title, string $visibility = 'public'): Playlist
     {
         $url = sprintf(
             "/users/%s/playlists/create",
@@ -409,18 +409,18 @@ class Client
             'visibility' => $visibility
         );
 
-        return $this->post($url, $data)->result;
+        return new Playlist($this, $this->post($url, $data)->result);
     }
 
     /**
-     * Удаление плейлиста
+     * Deleting a playlist
      *
-     * @param int|string $kind Уникальный идентификатор плейлиста
+     * @param int|string $kind The unique ID of the user's playlist
      *
-     * @return mixed decoded json
+     * @return string result status
      * @throws YandexMusicException
      */
-    public function usersPlaylistsDelete(int|string $kind): mixed
+    public function usersPlaylistsDelete(int|string $kind): string
     {
         $url = sprintf(
             "/users/%s/playlists/%s/delete",
@@ -432,15 +432,15 @@ class Client
     }
 
     /**
-     * Изменение названия плейлиста
+     * Changing the playlist name
      *
-     * @param int|string $kind Уникальный идентификатор плейлиста
-     * @param string $name Новое название
+     * @param int|string $kind The unique ID of the user's playlist
+     * @param string $name New name
      *
-     * @return mixed decoded json
+     * @return Playlist
      * @throws YandexMusicException
      */
-    public function usersPlaylistsNameChange(int|string $kind, string $name): mixed
+    public function usersPlaylistsNameChange(int|string $kind, string $name): Playlist
     {
         $url = sprintf(
             "/users/%s/playlists/%s/name",
@@ -452,15 +452,15 @@ class Client
             'value' => $name
         );
 
-        return $this->post($url, $data)->result;
+        return new Playlist($this->post($url, $data)->result);
     }
 
     /**
-     * Изменение плейлиста.
+     * Changing the playlist
      *
-     * @param int|string $kind Уникальный идентификатор плейлиста
-     * @param string $diff JSON представления отличий старого и нового плейлиста
-     * @param int $revision
+     * @param int|string $kind The unique ID of the user's playlist
+     * @param string $diff JSON representation of changes
+     * @param int $revision Action number
      *
      * @return mixed parsed json
      * @throws YandexMusicException
@@ -486,36 +486,34 @@ class Client
     }
 
     /**
-     * Добавление трека в плейлист
-     * @param int|string $kind Уникальный идентификатор плейлиста
-     * @param int|string $trackId Уникальный идентификатор трека
-     * @param int|string $albumId Уникальный идентификатор альбома
-     * @param int $at Индекс для вставки
-     * @param int|null $revision
+     * Adding a track to a playlist
+     * @param int|string $kind The unique ID of the user's playlist
+     * @param int|string $trackId Unique track ID
+     * @param int $at Index to insert
+     * @param int|null $revision Action number
      *
-     * @return mixed parsed json
+     * @return Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsInsertTrack(
         int|string $kind,
         int|string $trackId,
-        int|string $albumId,
         int $at = 0,
         int $revision = null
-    ): mixed {
+    ): Playlist {
         if ($revision == null) {
-            $revision = $this->usersPlaylists($kind)->result[0]->revision;
+            $revision = $this->usersPlaylists($kind)[0]->revision;
         }
 
         $ops = json_encode(array(
             [
                 'op' => "insert",
                 'at' => $at,
-                'tracks' => [['id' => $trackId, 'albumId' => $albumId]]
+                'tracks' => [['id' => $trackId]]
             ]
         ));
 
-        return $this->usersPlaylistsChange($kind, $ops, $revision);
+        return new Playlist($this, $this->usersPlaylistsChange($kind, $ops, $revision));
     }
 
     /**
@@ -972,11 +970,11 @@ class Client
      * Sending a post request
      *
      * @param string $url
-     * @param null $data
+     * @param array $data
      * @return stdClass
      * @throws YandexMusicException
      */
-    private function post(string $url, $data = null): stdClass
+    private function post(string $url, array $data = []): stdClass
     {
         return json_decode($this->requestYandexAPI->post($this->baseUrl . $url, $data));
     }
