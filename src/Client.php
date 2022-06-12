@@ -588,14 +588,16 @@ class Client
     }
 
     /**
+     * Actions from the list of likes
+     *
      * @param string $objectType
      * @param array|int|string $ids
      * @param bool $remove
      *
-     * @return mixed parsed json
+     * @return int Action number
      * @throws YandexMusicException
      */
-    private function likeAction(string $objectType, array|int|string $ids, bool $remove = false): mixed
+    private function likeAction(string $objectType, array|int|string $ids, bool $remove = false): int
     {
         $action = $remove ? 'remove' : 'add-multiple';
 
@@ -616,81 +618,97 @@ class Client
     }
 
     /**
+     * Adding a track to a favorite
+     *
      * @param array|int|string $trackIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesTracksAdd(array|int|string $trackIds): mixed
+    public function usersLikesTracksAdd(array|int|string $trackIds): int
     {
         return $this->likeAction('track', $trackIds);
     }
 
     /**
+     * Deleting a track from a favorite
+     *
      * @param array|int|string $trackIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesTracksRemove(array|int|string $trackIds): mixed
+    public function usersLikesTracksRemove(array|int|string $trackIds): int
     {
         return $this->likeAction('track', $trackIds, true);
     }
 
     /**
+     * Adding an artist to your favorite
+     *
      * @param array|int|string $artistIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesArtistsAdd(array|int|string $artistIds): mixed
+    public function usersLikesArtistsAdd(array|int|string $artistIds): int
     {
         return $this->likeAction('artist', $artistIds);
     }
 
     /**
+     * Removing an artist from a favorite
+     *
      * @param array|int|string $artistIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesArtistsRemove(array|int|string $artistIds): mixed
+    public function usersLikesArtistsRemove(array|int|string $artistIds): int
     {
         return $this->likeAction('artist', $artistIds, true);
     }
 
     /**
+     * Adding a playlist to your favorite
+     *
      * @param array|int|string $playlistIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesPlaylistsAdd(array|int|string $playlistIds): mixed
+    public function usersLikesPlaylistsAdd(array|int|string $playlistIds): int
     {
         return $this->likeAction('playlist', $playlistIds);
     }
 
     /**
+     * Deleting a playlist from a favorite
+     *
      * @param array|int|string $playlistIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesPlaylistsRemove(array|int|string $playlistIds): mixed
+    public function usersLikesPlaylistsRemove(array|int|string $playlistIds): int
     {
         return $this->likeAction('playlist', $playlistIds, true);
     }
 
     /**
+     * Adding an album to your favorite
+     *
      * @param array|int|string $albumIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesAlbumsAdd(array|int|string $albumIds): mixed
+    public function usersLikesAlbumsAdd(array|int|string $albumIds): int
     {
         return $this->likeAction('album', $albumIds);
     }
 
     /**
+     * Deleting an album from a favorite
+     *
      * @param array|int|string $albumIds
-     * @return mixed
+     * @return int Action number
      * @throws YandexMusicException
      */
-    public function usersLikesAlbumsRemove(array|int|string $albumIds): mixed
+    public function usersLikesAlbumsRemove(array|int|string $albumIds): int
     {
         return $this->likeAction('album', $albumIds, true);
     }
@@ -924,6 +942,8 @@ class Client
     }
 
     /**
+     * Getting a Supplement track
+     *
      * @param int|string $trackId
      * @return Supplement
      * @throws YandexMusicException
@@ -942,6 +962,8 @@ class Client
     }
 
     /**
+     * Sending a post request
+     *
      * @param string $url
      * @param null $data
      * @return stdClass
@@ -953,8 +975,10 @@ class Client
     }
 
     /**
+     * Sending a get request
+     *
      * @param string $url
-     * @return mixed
+     * @return stdClass
      * @throws YandexMusicException
      */
     private function get(string $url): stdClass
