@@ -7,6 +7,7 @@ use DateTimeInterface;
 use stdClass;
 use StounhandJ\YandexMusicApi\Account\AccountSetting;
 use StounhandJ\YandexMusicApi\Account\AccountStatus;
+use StounhandJ\YandexMusicApi\Account\RotorAccountStatus;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Queue\Queue;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
@@ -37,6 +38,8 @@ class Client
     }
 
     /**
+     * Getting an account uid
+     *
      * @return int
      * @throws YandexMusicException
      */
@@ -46,7 +49,7 @@ class Client
             $this->accountStatus = $this->accountStatus();
         }
 
-        return $this->accountStatus->account->uid;
+        return $this->accountStatus->getAccount()->uid;
     }
 
     /**
@@ -61,7 +64,7 @@ class Client
     }
 
     /**
-     * Получение статуса аккаунта
+     * Getting account status
      *
      * @return AccountStatus decoded json
      * @throws YandexMusicException
@@ -72,6 +75,8 @@ class Client
     }
 
     /**
+     * Getting a list of all queues at the moment
+     *
      * @return Queue[] decoded json
      * @throws YandexMusicException
      */
@@ -81,49 +86,54 @@ class Client
     }
 
     /**
-     * @param $id
+     * Getting a specific queue
+     *
+     * @param $id string Queue Identifier
      * @return Queue decoded json
      * @throws YandexMusicException
      */
-    public function queue($id): Queue
+    public function queue(string $id): Queue
     {
         return new Queue($this, $this->get("/queues/$id")->result);
     }
 
     /**
+     * Getting rotor account status
+     *
+     * @return RotorAccountStatus
      * @throws YandexMusicException
      */
-    public function rotorAccountStatus(): mixed
+    public function rotorAccountStatus(): RotorAccountStatus
     {
-        return $this->get("/rotor/account/status")->result;
+        return new RotorAccountStatus($this, $this->get("/rotor/account/status")->result);
     }
 
     /**
-     * Получение оповещений
+     * Receiving alerts
      *
      * @return array decoded json
      * @throws YandexMusicException
      */
     public function permissionAlerts(): array
     {
-        return $this->get("/permission-alerts")->result;
+        return $this->get("/permission-alerts")->result->alerts;
     }
 
     /**
-     * Получение значений экспериментальных функций аккаунта
+     * Getting the values of experimental account functions
      *
      * @return array decoded json
      * @throws YandexMusicException
      */
     public function accountExperiments(): array
     {
-        return $this->get("/account/experiments")->result;
+        return json_decode(json_encode($this->get("/account/experiments")->result), true);
     }
 
     /**
      * Получение потока информации (фида) подобранного под пользователя.
      * Содержит умные плейлисты.
-     *
+     * TODO Подготовить модель
      * @return array decoded json
      * @throws YandexMusicException
      */
@@ -142,12 +152,12 @@ class Client
     }
 
     /**
-     * Получение лендинг-страницы содержащий блоки с новыми релизами,
-     * чартами, плейлистами с новинками и т.д.
+     * Getting a landing page containing blocks with new releases,
+     * charts, playlists with new products, etc.
      *
-     * Поддерживаемые типы блоков: personalplaylists, promotions, new-releases, new-playlists,
+     * Supported block types: personalplaylists, promotions, new-releases, new-playlists,
      * mixes, chart, artists, albums, playlists, play_contexts.
-     *
+     * TODO сделать enum и модель
      * @param array|string $blocks
      *
      * @return mixed parsed json
@@ -174,8 +184,9 @@ class Client
     }
 
     /**
-     * Получение жанров музыки
-     *
+     * Getting genres of music
+     * TODO модель
+     * TODO СТОП
      * @return array parsed json
      * @throws YandexMusicException
      */
