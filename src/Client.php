@@ -14,6 +14,7 @@ use StounhandJ\YandexMusicApi\Artist\ArtistBriefInfo;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Queue\Queue;
+use StounhandJ\YandexMusicApi\Station\Station;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
 use StounhandJ\YandexMusicApi\Track\Supplement\Video;
@@ -517,29 +518,32 @@ class Client
         return $this->usersPlaylistsChange($kind, $ops, $revision);
     }
 
-
     /**
-     * @return mixed parsed json
-     * @throws YandexMusicException
-     */
-    public function rotorStationsDashboard(): mixed
-    {
-        return $this->get("/rotor/stations/dashboard")->result;
-    }
-
-    /**
-     * @param string $lang Язык ответа API в ISO 639-1
+     * Getting personal stations
      *
-     * @return mixed parsed json
+     * @return Station[]
      * @throws YandexMusicException
      */
-    public function rotorStationsList(string $lang = 'en'): mixed
+    public function rotorStationsDashboard(): array
     {
-        return $this->get("/rotor/stations/list?language=$lang")->result;
+        return Station::deList($this, $this->get("/rotor/stations/dashboard")->result);
     }
 
     /**
-     * @param string $genre Жанр
+     * Getting all the stations
+     *
+     * @param string $lang API response language in ISO 639-1
+     *
+     * @return Station[]
+     * @throws YandexMusicException
+     */
+    public function rotorStationsList(string $lang = 'en'): array
+    {
+        return Station::deList($this, $this->get("/rotor/stations/list?language=$lang")->result);
+    }
+
+    /**
+     * @param string $genre
      * @param string $type
      * @param string|null $from
      * @param int|string|null $batchId
