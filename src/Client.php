@@ -526,7 +526,7 @@ class Client
      */
     public function rotorStationsDashboard(): array
     {
-        return Station::deList($this, $this->get("/rotor/stations/dashboard")->result);
+        return Station::deList($this, $this->get("/rotor/stations/dashboard")->result->stations);
     }
 
     /**
