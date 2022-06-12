@@ -10,6 +10,7 @@ use StounhandJ\YandexMusicApi\Account\AccountStatus;
 use StounhandJ\YandexMusicApi\Account\RotorAccountStatus;
 use StounhandJ\YandexMusicApi\Album\Album;
 use StounhandJ\YandexMusicApi\Artist\Artist;
+use StounhandJ\YandexMusicApi\Artist\ArtistBriefInfo;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Queue\Queue;
@@ -575,16 +576,18 @@ class Client
     }
 
     /**
+     * Getting all the information about the artist from his page
+     *
      * @param int|string $artistId
      *
-     * @return mixed parsed json
+     * @return ArtistBriefInfo
      * @throws YandexMusicException
      */
-    public function artistsBriefInfo(int|string $artistId): mixed
+    public function artistsBriefInfo(int|string $artistId): ArtistBriefInfo
     {
         $url = "/artists/$artistId/brief-info";
 
-        return $this->get($url)->result;
+        return new ArtistBriefInfo($this, $this->get($url)->result);
     }
 
     /**
@@ -957,7 +960,7 @@ class Client
         $result = $this->get($url)->result;
         return new Supplement(
             new Lyric($this, $result->lyrics ?? null),
-            array_map(fn($value): Video => new Video($this, $value), $result->videos ?? [])
+            Video::deList($this, $result->videos ?? [])
         );
     }
 
