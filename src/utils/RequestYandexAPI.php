@@ -23,14 +23,19 @@ class RequestYandexAPI
      * @throws NotFoundException
      * @throws BadRequestException
      */
-    public function post(string $url, array $data): string
+    public function post(string $url, array $data = []): string
     {
         $data = $this->dataNormalization($data);
+
+        $headers = $this->config->getHeaders();
+        if (count($data) > 0) {
+            $headers[] = "Content-Type: multipart/form-data;charset=utf-8";
+        }
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
