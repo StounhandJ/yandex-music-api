@@ -32,12 +32,15 @@ class Config
 
     public function getHeaders(): array
     {
-        return array(
+        $headers = array(
             "X-Yandex-Music-Client: {$this->client}",
-            "Authorization: OAuth {$this->token}",
             'User-Agent: Windows 10',
             'X-Yandex-Music-Device: os=Python; os_version=; manufacturer=Stoun; model=Yandex Music API; clid=; device_id=random; uuid=random',
             'Connection: Keep-Alive'
         );
+        if ($this->token != "") {
+            $headers[] = "Authorization: OAuth {$this->token}";
+        }
+        return $headers;
     }
 }

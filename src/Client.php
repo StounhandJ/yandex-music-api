@@ -25,7 +25,7 @@ class Client
      * @param string $baseUrl
      */
     public function __construct(
-        string $token,
+        string $token = "",
         public string $oauthUrl = "https://oauth.yandex.ru",
         public string $baseUrl = "https://api.music.yandex.net"
     ) {
