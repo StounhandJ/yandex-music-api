@@ -85,11 +85,11 @@ class RequestYandexAPI
             return "";
         }
         $response = json_decode($response);
-        return sprintf(
+        return isset($response->error) ? sprintf(
             "%s %s",
             $response->error->name,
             $response->error->message
-        );
+        ) : "";
     }
 
     public function getXml($url): SimpleXMLElement|bool
