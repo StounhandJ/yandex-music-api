@@ -1,12 +1,11 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Album;
+namespace StounhandJ\YandexMusicApi\Models;
 
 use stdClass;
-use StounhandJ\YandexMusicApi\Artist\Artist;
-use StounhandJ\YandexMusicApi\Artist\Label;
 use StounhandJ\YandexMusicApi\Client;
-use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Models\Artist\Artist;
+use StounhandJ\YandexMusicApi\Models\Artist\Label;
 
 class Album extends JSONObject
 {
@@ -41,7 +40,7 @@ class Album extends JSONObject
     }
 
     /**
-     * @return Label[]
+     * @return \StounhandJ\YandexMusicApi\Models\Artist\Label[]
      */
     public function getLabels(): array
     {

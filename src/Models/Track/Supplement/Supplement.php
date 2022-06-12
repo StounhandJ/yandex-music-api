@@ -1,6 +1,6 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Track\Supplement;
+namespace StounhandJ\YandexMusicApi\Models\Track\Supplement;
 
 class Supplement
 {

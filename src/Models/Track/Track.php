@@ -1,13 +1,13 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Track;
+namespace StounhandJ\YandexMusicApi\Models\Track;
 
 use stdClass;
 use StounhandJ\YandexMusicApi\Client;
-use StounhandJ\YandexMusicApi\JSONObject;
-use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
-use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
-use StounhandJ\YandexMusicApi\Track\Supplement\Video;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 
 class Track extends JSONObject
 {
@@ -47,7 +47,7 @@ class Track extends JSONObject
     }
 
     /**
-     * @return Video[]
+     * @return \StounhandJ\YandexMusicApi\Models\Track\Supplement\Video[]
      */
     public function getVideos(): array
     {

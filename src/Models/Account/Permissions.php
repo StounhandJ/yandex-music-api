@@ -1,8 +1,8 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Account;
+namespace StounhandJ\YandexMusicApi\Models\Account;
 
-use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
 
 class Permissions extends JSONObject
 {

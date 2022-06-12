@@ -1,6 +1,8 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi;
+namespace StounhandJ\YandexMusicApi\Models;
+
+use StounhandJ\YandexMusicApi\Client;
 
 class JSONObject
 {

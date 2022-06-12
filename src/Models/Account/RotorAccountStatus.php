@@ -1,21 +1,18 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Account;
+namespace StounhandJ\YandexMusicApi\Models\Account;
 
-use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
 
-class AccountStatus extends JSONObject
+class RotorAccountStatus extends JSONObject
 {
     protected array $account;
     protected array $permissions;
     protected array $subscription;
-    public bool $subeditor;
-    public int $subeditorLevel;
-    public bool $pretrialActive;
-    public array $masterhub;
+    public int $skipsPerHour;
+    public bool $stationExists;
     public array $plus;
-    public string $defaultEmail;
-    public string $userhash;
+    public int $premiumRegion;
 
     /**
      * @return Account

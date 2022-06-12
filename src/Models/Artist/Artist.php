@@ -1,10 +1,10 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Artist;
+namespace StounhandJ\YandexMusicApi\Models\Artist;
 
 use stdClass;
 use StounhandJ\YandexMusicApi\Client;
-use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
 
 class Artist extends JSONObject
 {

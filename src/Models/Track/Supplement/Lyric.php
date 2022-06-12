@@ -1,8 +1,8 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Track\Supplement;
+namespace StounhandJ\YandexMusicApi\Models\Track\Supplement;
 
-use StounhandJ\YandexMusicApi\JSONObject;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
 
 class Lyric extends JSONObject
 {

@@ -5,20 +5,20 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use stdClass;
-use StounhandJ\YandexMusicApi\Account\AccountSetting;
-use StounhandJ\YandexMusicApi\Account\AccountStatus;
-use StounhandJ\YandexMusicApi\Account\RotorAccountStatus;
-use StounhandJ\YandexMusicApi\Album\Album;
-use StounhandJ\YandexMusicApi\Artist\Artist;
-use StounhandJ\YandexMusicApi\Artist\ArtistBriefInfo;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
-use StounhandJ\YandexMusicApi\Playlist\Playlist;
-use StounhandJ\YandexMusicApi\Queue\Queue;
-use StounhandJ\YandexMusicApi\Station\Station;
-use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
-use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
-use StounhandJ\YandexMusicApi\Track\Supplement\Video;
-use StounhandJ\YandexMusicApi\Track\Track;
+use StounhandJ\YandexMusicApi\Models\Account\AccountSetting;
+use StounhandJ\YandexMusicApi\Models\Account\AccountStatus;
+use StounhandJ\YandexMusicApi\Models\Account\RotorAccountStatus;
+use StounhandJ\YandexMusicApi\Models\Album;
+use StounhandJ\YandexMusicApi\Models\Artist\Artist;
+use StounhandJ\YandexMusicApi\Models\Artist\ArtistBriefInfo;
+use StounhandJ\YandexMusicApi\Models\Playlist;
+use StounhandJ\YandexMusicApi\Models\Queue;
+use StounhandJ\YandexMusicApi\Models\Station;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
+use StounhandJ\YandexMusicApi\Models\Track\Track;
 use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
 
 class Client
@@ -43,7 +43,7 @@ class Client
     }
 
     /**
-     * Getting an account uid
+     * Getting an Account uid
      *
      * @return int
      * @throws YandexMusicException
@@ -58,31 +58,31 @@ class Client
     }
 
     /**
-     * Returns information about the current account setting
+     * Returns information about the current Account setting
      *
-     * @return AccountSetting
+     * @return \StounhandJ\YandexMusicApi\Models\Account\AccountSetting
      * @throws YandexMusicException
      */
     public function accountSettings(): AccountSetting
     {
-        return new AccountSetting($this, $this->get("/account/settings")->result);
+        return new AccountSetting($this, $this->get("/Account/settings")->result);
     }
 
     /**
-     * Getting account status
+     * Getting Account status
      *
-     * @return AccountStatus decoded json
+     * @return \StounhandJ\YandexMusicApi\Models\Account\AccountStatus decoded json
      * @throws YandexMusicException
      */
     public function accountStatus(): AccountStatus
     {
-        return new AccountStatus($this, $this->get("/account/status")->result);
+        return new AccountStatus($this, $this->get("/Account/status")->result);
     }
 
     /**
      * Getting a list of all queues at the moment
      *
-     * @return Queue[] decoded json
+     * @return \StounhandJ\YandexMusicApi\Models\Queue[] decoded json
      * @throws YandexMusicException
      */
     public function queuesList(): array
@@ -94,7 +94,7 @@ class Client
      * Getting a specific queue
      *
      * @param $id string Queue Identifier
-     * @return Queue decoded json
+     * @return \StounhandJ\YandexMusicApi\Models\Queue decoded json
      * @throws YandexMusicException
      */
     public function queue(string $id): Queue
@@ -103,14 +103,14 @@ class Client
     }
 
     /**
-     * Getting rotor account status
+     * Getting rotor Account status
      *
-     * @return RotorAccountStatus
+     * @return \StounhandJ\YandexMusicApi\Models\Account\RotorAccountStatus
      * @throws YandexMusicException
      */
     public function rotorAccountStatus(): RotorAccountStatus
     {
-        return new RotorAccountStatus($this, $this->get("/rotor/account/status")->result);
+        return new RotorAccountStatus($this, $this->get("/rotor/Account/status")->result);
     }
 
     /**
@@ -125,14 +125,14 @@ class Client
     }
 
     /**
-     * Getting the values of experimental account functions
+     * Getting the values of experimental Account functions
      *
      * @return array decoded json
      * @throws YandexMusicException
      */
     public function accountExperiments(): array
     {
-        return json_decode(json_encode($this->get("/account/experiments")->result), true);
+        return json_decode(json_encode($this->get("/Account/experiments")->result), true);
     }
 
     /**
@@ -292,13 +292,13 @@ class Client
         $url = "/play-audio";
 
         $data = array(
-            'track-id' => $trackId,
+            'Track2-id' => $trackId,
             'from-cache' => $fromCache,
             'from' => $from,
             'play-id' => $playId,
             'uid' => $this->getUid(),
             'timestamp' => (new DateTime())->format(DateTime::ATOM),
-            'track-length-seconds' => $trackLengthSeconds,
+            'Track2-length-seconds' => $trackLengthSeconds,
             'total-played-seconds' => $totalPlayedSeconds,
             'end-position-seconds' => $endPositionSeconds,
             'album-id' => $albumId,
@@ -370,7 +370,7 @@ class Client
      * @param array|int|string $kind The unique ID of the user's playlist
      * @param int|null $userId The unique ID of the user who owns the playlist
      *
-     * @return Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
      * @throws YandexMusicException
      */
     public function usersPlaylists(array|int|string $kind, int $userId = null): array
@@ -437,7 +437,7 @@ class Client
      * @param int|string $kind The unique ID of the user's playlist
      * @param string $name New name
      *
-     * @return Playlist
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsNameChange(int|string $kind, string $name): Playlist
@@ -486,13 +486,13 @@ class Client
     }
 
     /**
-     * Adding a track to a playlist
+     * Adding a Track2 to a playlist
      * @param int|string $kind The unique ID of the user's playlist
-     * @param int|string $trackId Unique track ID
+     * @param int|string $trackId Unique Track2 ID
      * @param int $at Index to insert
      * @param int|null $revision Action number
      *
-     * @return Playlist
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsInsertTrack(
@@ -582,7 +582,7 @@ class Client
      *
      * @param int|string $artistId
      *
-     * @return ArtistBriefInfo
+     * @return \StounhandJ\YandexMusicApi\Models\Artist\ArtistBriefInfo
      * @throws YandexMusicException
      */
     public function artistsBriefInfo(int|string $artistId): ArtistBriefInfo
@@ -619,11 +619,11 @@ class Client
 
         $response = $this->post($url, $data)->result;
 
-        return $objectType == 'track' ? $response->revision : $response;
+        return $objectType == 'Track2' ? $response->revision : $response;
     }
 
     /**
-     * Adding a track to a favorite
+     * Adding a Track2 to a favorite
      *
      * @param array|int|string $trackIds
      * @return int Action number
@@ -631,11 +631,11 @@ class Client
      */
     public function usersLikesTracksAdd(array|int|string $trackIds): int
     {
-        return $this->likeAction('track', $trackIds);
+        return $this->likeAction('Track2', $trackIds);
     }
 
     /**
-     * Deleting a track from a favorite
+     * Deleting a Track2 from a favorite
      *
      * @param array|int|string $trackIds
      * @return int Action number
@@ -643,7 +643,7 @@ class Client
      */
     public function usersLikesTracksRemove(array|int|string $trackIds): int
     {
-        return $this->likeAction('track', $trackIds, true);
+        return $this->likeAction('Track2', $trackIds, true);
     }
 
     /**
@@ -749,7 +749,7 @@ class Client
      * Getting artists by IDs
      *
      * @param array|int|string $artistIds
-     * @return Artist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Artist\Artist[]
      * @throws YandexMusicException
      */
     public function artists(array|int|string $artistIds): array
@@ -761,7 +761,7 @@ class Client
      * Getting albums by IDs
      *
      * @param array|int|string $albumIds
-     * @return Album[]
+     * @return \StounhandJ\YandexMusicApi\Models\Album[]
      * @throws YandexMusicException
      */
     public function albums(array|int|string $albumIds): array
@@ -778,7 +778,7 @@ class Client
      */
     public function tracks(array|int|string $trackIds): array
     {
-        return Track::deList($this, $this->getList('track', $trackIds));
+        return Track::deList($this, $this->getList('Track2', $trackIds));
     }
 
     /**
@@ -812,7 +812,7 @@ class Client
     /**
      * Getting the objects you like
      *
-     * @param string $objectType track, album, artist, playlist
+     * @param string $objectType Track2, album, artist, playlist
      *
      * @return array decoded json
      * @throws YandexMusicException
@@ -827,7 +827,7 @@ class Client
 
         $response = $this->get($url)->result;
 
-        return $objectType == "track" ? $response->library : $response;
+        return $objectType == "Track2" ? $response->library : $response;
     }
 
     /**
@@ -838,13 +838,13 @@ class Client
      */
     public function getLikesTracks(): array
     {
-        return Track::deList($this, $this->getLikes('track'));
+        return Track::deList($this, $this->getLikes('Track2'));
     }
 
     /**
      * Getting the albums you like
      *
-     * @return Album[]
+     * @return \StounhandJ\YandexMusicApi\Models\Album[]
      * @throws YandexMusicException
      */
     public function getLikesAlbums(): array
@@ -855,7 +855,7 @@ class Client
     /**
      * Getting the artists you like
      *
-     * @return Artist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Artist\Artist[]
      * @throws YandexMusicException
      */
     public function getLikesArtists(): array
@@ -866,7 +866,7 @@ class Client
     /**
      * Getting playlists you like
      *
-     * @return Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
      * @throws YandexMusicException
      */
     public function getLikesPlaylists(): array
@@ -916,14 +916,14 @@ class Client
         );
 
         $data = array(
-            'track-ids' => $ids
+            'Track2-ids' => $ids
         );
 
         return $this->post($url, $data)->result->revision;
     }
 
     /**
-     * Adding a track to the disliked list
+     * Adding a Track2 to the disliked list
      *
      * @param array|int|string $trackIds
      * @return int Action Number
@@ -935,7 +935,7 @@ class Client
     }
 
     /**
-     * Deleting a track from the disliked list
+     * Deleting a Track2 from the disliked list
      *
      * @param array|int|string $trackIds
      * @return int Action Number
@@ -947,10 +947,10 @@ class Client
     }
 
     /**
-     * Getting a Supplement track
+     * Getting a Supplement Track2
      *
      * @param int|string $trackId
-     * @return Supplement
+     * @return \StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement
      * @throws YandexMusicException
      */
     public function trackSupplement(int|string $trackId): Supplement

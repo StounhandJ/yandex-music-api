@@ -1,12 +1,12 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Artist;
+namespace StounhandJ\YandexMusicApi\Models\Artist;
 
-use StounhandJ\YandexMusicApi\Album\Album;
-use StounhandJ\YandexMusicApi\JSONObject;
-use StounhandJ\YandexMusicApi\Playlist\Playlist;
-use StounhandJ\YandexMusicApi\Track\Supplement\Video;
-use StounhandJ\YandexMusicApi\Track\Track;
+use StounhandJ\YandexMusicApi\Models\Album;
+use StounhandJ\YandexMusicApi\Models\JSONObject;
+use StounhandJ\YandexMusicApi\Models\Playlist;
+use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
+use StounhandJ\YandexMusicApi\Models\Track\Track;
 
 class ArtistBriefInfo extends JSONObject
 {
@@ -74,7 +74,7 @@ class ArtistBriefInfo extends JSONObject
     }
 
     /**
-     * @return Track[]
+     * @return \StounhandJ\YandexMusicApi\Models\Track\Track[]
      */
     public function getLastReleases(): array
     {
@@ -82,7 +82,7 @@ class ArtistBriefInfo extends JSONObject
     }
 
     /**
-     * @return Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
      */
     public function getPlaylists(): array
     {
