@@ -4,6 +4,10 @@ namespace StounhandJ\YandexMusicApi\Utils;
 
 use SimpleXMLElement;
 use StounhandJ\YandexMusicApi\Config;
+use StounhandJ\YandexMusicApi\Exception\BadRequestException;
+use StounhandJ\YandexMusicApi\Exception\NetworkException;
+use StounhandJ\YandexMusicApi\Exception\NotFoundException;
+use StounhandJ\YandexMusicApi\Exception\UnauthorizedException;
 
 class RequestYandexAPI
 {
@@ -13,6 +17,12 @@ class RequestYandexAPI
     ) {
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws NetworkException
+     * @throws NotFoundException
+     * @throws BadRequestException
+     */
     public function post(string $url, array $data): string
     {
         $ch = curl_init($url);
@@ -21,31 +31,65 @@ class RequestYandexAPI
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        $response = curl_exec($ch);
-        curl_close($ch);
 
-        return $response ?: "";
+        return $this->getContent($ch);
     }
 
+    /**
+     * @throws NetworkException
+     * @throws NotFoundException
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
     public function get(string $url): string
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->config->getHeaders());
-        $response = curl_exec($ch);
-        curl_close($ch);
 
-        return $response ?: "";
+        return $this->getContent($ch);
     }
 
-    private function dataToPostString(array $data): string
+    /**
+     * @throws NetworkException
+     * @throws NotFoundException
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    private function getContent(\CurlHandle $curlHandle): string
     {
-        $result = "";
-        foreach ($data as $name => $value) {
-            $result .= "$name=$value";
+        $response = curl_exec($curlHandle);
+        $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $error = $this->parseError($response);
+
+        curl_close($curlHandle);
+
+        if ($httpCode >= 200 && $httpCode <= 299) {
+            return $response ?: "";
         }
-        return $result;
+
+        throw match ($httpCode) {
+            400 => new UnauthorizedException($error),
+            401, 403 => new BadRequestException($error),
+            404 => new NotFoundException($error),
+            409, 413 => new NetworkException($error),
+            502, 503 => new NetworkException(),
+            default => new NetworkException("$error $httpCode $response"),
+        };
+    }
+
+    private function parseError(string $response): string
+    {
+        if ($response == "") {
+            return "";
+        }
+        $response = json_decode($response);
+        return sprintf(
+            "%s %s",
+            $response->error->name,
+            $response->error->message
+        );
     }
 
     public function getXml($url): SimpleXMLElement|bool
