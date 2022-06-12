@@ -4,7 +4,8 @@ namespace StounhandJ\YandexMusicApi;
 
 use DateTime;
 use DateTimeInterface;
-use Exception;
+use stdClass;
+use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Queue\Queue;
 use StounhandJ\YandexMusicApi\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Track\Supplement\Supplement;
@@ -33,6 +34,10 @@ class Client
         $this->requestYandexAPI = new RequestYandexAPI($this->config);
     }
 
+    /**
+     * @return int
+     * @throws YandexMusicException
+     */
     public function getUid(): int
     {
         if ($this->uid != -1) {
@@ -43,6 +48,10 @@ class Client
         return $this->uid;
     }
 
+    /**
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function accountSettings(): mixed
     {
         return $this->get("/account/settings");
@@ -50,6 +59,7 @@ class Client
 
     /**
      * @return Queue[] decoded json
+     * @throws YandexMusicException
      */
     public function queuesList(): array
     {
@@ -57,7 +67,9 @@ class Client
     }
 
     /**
+     * @param $id
      * @return Queue decoded json
+     * @throws YandexMusicException
      */
     public function queue($id): Queue
     {
@@ -68,12 +80,16 @@ class Client
      * Получение статуса аккаунта
      *
      * @return mixed decoded json
+     * @throws YandexMusicException
      */
     public function accountStatus(): mixed
     {
         return $this->get("/account/status")->result;
     }
 
+    /**
+     * @throws YandexMusicException
+     */
     public function rotorAccountStatus(): mixed
     {
         return $this->get("/rotor/account/status")->result;
@@ -83,6 +99,7 @@ class Client
      * Получение оповещений
      *
      * @return array decoded json
+     * @throws YandexMusicException
      */
     public function permissionAlerts(): array
     {
@@ -93,6 +110,7 @@ class Client
      * Получение значений экспериментальных функций аккаунта
      *
      * @return array decoded json
+     * @throws YandexMusicException
      */
     public function accountExperiments(): array
     {
@@ -104,12 +122,17 @@ class Client
      * Содержит умные плейлисты.
      *
      * @return array decoded json
+     * @throws YandexMusicException
      */
     public function feed(): array
     {
         return $this->get("/feed")->result;
     }
 
+    /**
+     * @return bool
+     * @throws YandexMusicException
+     */
     public function feedWizardIsPassed(): bool
     {
         return $this->get("/feed/wizard/is-passed")->result->isWizardPassed ?? false;
@@ -125,6 +148,7 @@ class Client
      * @param array|string $blocks
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function landing(array|string $blocks): mixed
     {
@@ -150,6 +174,7 @@ class Client
      * Получение жанров музыки
      *
      * @return array parsed json
+     * @throws YandexMusicException
      */
     public function genres(): array
     {
@@ -163,6 +188,7 @@ class Client
      * @param bool $getDirectLinks Получить ли при вызове метода прямую ссылку на загрузку
      *
      * @return array parsed json
+     * @throws YandexMusicException
      */
     public function tracksDownloadInfo(int|string $trackId, bool $getDirectLinks = false): array
     {
@@ -199,8 +225,6 @@ class Client
      * Метод доступен только одну минуту с момента
      * получения информации загрузке, иначе 410 ошибка!
      *
-     * TODO: перенести загрузку файла в другую функию
-     *
      * @param string $url xml-файл с информацией
      * @param string $codec Кодек файла
      * @param string $suffix
@@ -219,8 +243,6 @@ class Client
     /**
      * Метод для отправки текущего состояния прослушиваемого трека
      *
-     * TODO: метод не был протестирован!
-     *
      * @param int|string $trackId Уникальный идентификатор трека
      * @param string $from Наименования клиента
      * @param int|string $albumId Уникальный идентификатор альбома
@@ -232,9 +254,9 @@ class Client
      * @param int $endPositionSeconds Окончательное значение воспроизведенных секунд
      * @param string|null $client_now Текущая дата и время клиента в ISO
      *
-     * @return boolean
+     * @return stdClass
      *
-     * @throws Exception
+     * @throws YandexMusicException
      */
     private function playAudio(
         int|string $trackId,
@@ -247,7 +269,7 @@ class Client
         int $totalPlayedSeconds = 0,
         int $endPositionSeconds = 0,
         string $client_now = null
-    ): bool {
+    ): stdClass {
         $url = "/play-audio";
 
         $data = array(
@@ -274,6 +296,7 @@ class Client
      * @param int|string $albumId Уникальный идентификатор альбома
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function albumsWithTracks(int|string $albumId): mixed
     {
@@ -290,6 +313,7 @@ class Client
      * @param bool $playlistInBest Выдавать ли плейлисты лучшим вариантом поиска
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function search(
         string $text,
@@ -314,6 +338,7 @@ class Client
      * @param string $part Часть поискового запроса
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function searchSuggest(string $part): mixed
     {
@@ -323,14 +348,13 @@ class Client
     /**
      * Получение плейлиста или списка плейлистов по уникальным идентификаторам
      *
-     * TODO: метод не был протестирован!
-     *
      * @param array|int|string $kind Уникальный идентификатор плейлиста
      * @param int|null $userId Уникальный идентификатор пользователя владеющего плейлистом
      *
-     * @return mixed parsed json
+     * @return stdClass parsed json
+     * @throws YandexMusicException
      */
-    public function usersPlaylists(array|int|string $kind, int $userId = null): mixed
+    public function usersPlaylists(array|int|string $kind, int $userId = null): stdClass
     {
         if ($userId == null) {
             $userId = $this->getUid();
@@ -352,6 +376,7 @@ class Client
      * @param string $visibility Модификатор доступа
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function usersPlaylistsCreate(string $title, string $visibility = 'public'): mixed
     {
@@ -374,6 +399,7 @@ class Client
      * @param int|string $kind Уникальный идентификатор плейлиста
      *
      * @return mixed decoded json
+     * @throws YandexMusicException
      */
     public function usersPlaylistsDelete(int|string $kind): mixed
     {
@@ -393,6 +419,7 @@ class Client
      * @param string $name Новое название
      *
      * @return mixed decoded json
+     * @throws YandexMusicException
      */
     public function usersPlaylistsNameChange(int|string $kind, string $name): mixed
     {
@@ -412,16 +439,18 @@ class Client
     /**
      * Изменение плейлиста.
      *
-     * TODO: функция не готова, необходим вспомогательный класс для получения отличий
-     *
      * @param int|string $kind Уникальный идентификатор плейлиста
      * @param string $diff JSON представления отличий старого и нового плейлиста
-     * @param int $revision TODO
+     * @param int $revision
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
-    private function usersPlaylistsChange(int|string $kind, string $diff, int $revision = 1): mixed
-    {
+    private function usersPlaylistsChange(
+        int|string $kind,
+        string $diff,
+        int $revision = 1
+    ): mixed {
         $url = sprintf(
             "/users/%s/playlists/%s/change",
             $this->getUid(),
@@ -439,16 +468,14 @@ class Client
 
     /**
      * Добавление трека в плейлист
-     *
-     * TODO: функция не готова, необходим вспомогательный класс для получения отличий
-     *
      * @param int|string $kind Уникальный идентификатор плейлиста
      * @param int|string $trackId Уникальный идентификатор трека
      * @param int|string $albumId Уникальный идентификатор альбома
      * @param int $at Индекс для вставки
-     * @param int|null $revision TODO
+     * @param int|null $revision
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function usersPlaylistsInsertTrack(
         int|string $kind,
@@ -474,11 +501,8 @@ class Client
 
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function rotorStationsDashboard(): mixed
     {
@@ -486,13 +510,10 @@ class Client
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param string $lang Язык ответа API в ISO 639-1
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function rotorStationsList(string $lang = 'en'): mixed
     {
@@ -500,10 +521,6 @@ class Client
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param string $genre Жанр
      * @param string $type
      * @param string|null $from
@@ -512,7 +529,7 @@ class Client
      *
      * @return mixed parsed json
      *
-     * @throws Exception
+     * @throws YandexMusicException
      */
     public function rotorStationGenreFeedback(
         string $genre,
@@ -541,13 +558,10 @@ class Client
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param int|string $artistId
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function artistsBriefInfo(int|string $artistId): mixed
     {
@@ -557,15 +571,12 @@ class Client
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param string $objectType
      * @param array|int|string $ids
      * @param bool $remove
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     private function likeAction(string $objectType, array|int|string $ids, bool $remove = false): mixed
     {
@@ -587,55 +598,92 @@ class Client
         return $objectType == 'track' ? $response->revision : $response;
     }
 
+    /**
+     * @param array|int|string $trackIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesTracksAdd(array|int|string $trackIds): mixed
     {
         return $this->likeAction('track', $trackIds);
     }
 
+    /**
+     * @param array|int|string $trackIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesTracksRemove(array|int|string $trackIds): mixed
     {
         return $this->likeAction('track', $trackIds, true);
     }
 
+    /**
+     * @param array|int|string $artistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesArtistsAdd(array|int|string $artistIds): mixed
     {
         return $this->likeAction('artist', $artistIds);
     }
 
+    /**
+     * @param array|int|string $artistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesArtistsRemove(array|int|string $artistIds): mixed
     {
         return $this->likeAction('artist', $artistIds, true);
     }
 
+    /**
+     * @param array|int|string $playlistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesPlaylistsAdd(array|int|string $playlistIds): mixed
     {
         return $this->likeAction('playlist', $playlistIds);
     }
 
+    /**
+     * @param array|int|string $playlistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesPlaylistsRemove(array|int|string $playlistIds): mixed
     {
         return $this->likeAction('playlist', $playlistIds, true);
     }
 
+    /**
+     * @param array|int|string $albumIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesAlbumsAdd(array|int|string $albumIds): mixed
     {
         return $this->likeAction('album', $albumIds);
     }
 
+    /**
+     * @param array|int|string $albumIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function usersLikesAlbumsRemove(array|int|string $albumIds): mixed
     {
         return $this->likeAction('album', $albumIds, true);
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param string $objectType
      * @param array|int|string $ids
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     private function getList(string $objectType, array|int|string $ids): mixed
     {
@@ -655,11 +703,21 @@ class Client
         return $this->post($url, $data)->result;
     }
 
+    /**
+     * @param array|int|string $artistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function artists(array|int|string $artistIds): mixed
     {
         return $this->getList('artist', $artistIds);
     }
 
+    /**
+     * @param array|int|string $albumIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function albums(array|int|string $albumIds): mixed
     {
         return $this->getList('album', $albumIds);
@@ -667,24 +725,28 @@ class Client
 
     /**
      *
+     * @param array|int|string $trackIds
      * @return Track[] parsed json
+     * @throws YandexMusicException
      */
     public function tracks(array|int|string $trackIds): array
     {
         return array_map(fn($value): Track => new Track($this, $value), $this->getList('track', $trackIds));
     }
 
+    /**
+     * @param array|int|string $playlistIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
     public function playlistsList(array|int|string $playlistIds): mixed
     {
         return $this->getList('playlist', $playlistIds);
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function usersPlaylistsList(): mixed
     {
@@ -702,6 +764,7 @@ class Client
      * @param string $objectType track, album, artist, playlist
      *
      * @return mixed decoded json
+     * @throws YandexMusicException
      */
     private function getLikes(string $objectType): mixed
     {
@@ -716,22 +779,38 @@ class Client
         return $objectType == "track" ? $response->library : $response;
     }
 
-    public function getLikesTracks()
+    /**
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function getLikesTracks(): mixed
     {
         return $this->getLikes('track');
     }
 
-    public function getLikesAlbums()
+    /**
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function getLikesAlbums(): mixed
     {
         return $this->getLikes('album');
     }
 
-    public function getLikesArtists()
+    /**
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function getLikesArtists(): mixed
     {
         return $this->getLikes('artist');
     }
 
-    public function getLikesPlaylists()
+    /**
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function getLikesPlaylists(): mixed
     {
         return $this->getLikes('playlist');
     }
@@ -742,6 +821,7 @@ class Client
      * @param int $ifModifiedSinceRevision
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     public function getDislikesTracks(int $ifModifiedSinceRevision = 0): mixed
     {
@@ -755,14 +835,11 @@ class Client
     }
 
     /**
-     * TODO: Описание функции
-     *
-     * TODO: метод не был протестирован!
-     *
      * @param array|int|string $ids
      * @param bool $remove
      *
      * @return mixed parsed json
+     * @throws YandexMusicException
      */
     private function dislikeAction(array|int|string $ids, bool $remove = false): mixed
     {
@@ -781,16 +858,31 @@ class Client
         return $this->post($url, $data)->result;
     }
 
-    public function usersDislikesTracksAdd(array|int|string $trackIds)
+    /**
+     * @param array|int|string $trackIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function usersDislikesTracksAdd(array|int|string $trackIds): mixed
     {
         return $this->dislikeAction($trackIds);
     }
 
-    public function usersDislikesTracksRemove(array|int|string $trackIds)
+    /**
+     * @param array|int|string $trackIds
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    public function usersDislikesTracksRemove(array|int|string $trackIds): mixed
     {
         return $this->dislikeAction($trackIds, true);
     }
 
+    /**
+     * @param int|string $trackId
+     * @return Supplement
+     * @throws YandexMusicException
+     */
     public function trackSupplement(int|string $trackId): Supplement
     {
         $url = sprintf(
@@ -804,12 +896,23 @@ class Client
         );
     }
 
-    private function post($url, $data = null): mixed
+    /**
+     * @param string $url
+     * @param null $data
+     * @return stdClass
+     * @throws YandexMusicException
+     */
+    private function post(string $url, $data = null): stdClass
     {
         return json_decode($this->requestYandexAPI->post($this->baseUrl . $url, $data));
     }
 
-    private function get($url): mixed
+    /**
+     * @param string $url
+     * @return mixed
+     * @throws YandexMusicException
+     */
+    private function get(string $url): stdClass
     {
         return json_decode(
             $this->requestYandexAPI->get($this->baseUrl . $url)
