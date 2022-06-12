@@ -874,13 +874,15 @@ class Client
     }
 
     /**
+     * Actions with a list of tracks you don't like
+     *
      * @param array|int|string $ids
      * @param bool $remove
      *
-     * @return mixed parsed json
+     * @return int Action Number
      * @throws YandexMusicException
      */
-    private function dislikeAction(array|int|string $ids, bool $remove = false): mixed
+    private function dislikeAction(array|int|string $ids, bool $remove = false): int
     {
         $action = $remove ? 'remove' : 'add-multiple';
 
@@ -894,25 +896,29 @@ class Client
             'track-ids' => $ids
         );
 
-        return $this->post($url, $data)->result;
+        return $this->post($url, $data)->result->revision;
     }
 
     /**
+     * Adding a track to the disliked list
+     *
      * @param array|int|string $trackIds
-     * @return mixed
+     * @return int Action Number
      * @throws YandexMusicException
      */
-    public function usersDislikesTracksAdd(array|int|string $trackIds): mixed
+    public function usersDislikesTracksAdd(array|int|string $trackIds): int
     {
         return $this->dislikeAction($trackIds);
     }
 
     /**
+     * Deleting a track from the disliked list
+     *
      * @param array|int|string $trackIds
-     * @return mixed
+     * @return int Action Number
      * @throws YandexMusicException
      */
-    public function usersDislikesTracksRemove(array|int|string $trackIds): mixed
+    public function usersDislikesTracksRemove(array|int|string $trackIds): int
     {
         return $this->dislikeAction($trackIds, true);
     }
