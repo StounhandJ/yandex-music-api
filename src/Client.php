@@ -250,27 +250,25 @@ class Client
     }
 
     /**
-     * Метод для отправки текущего состояния прослушиваемого трека
+     * Method for sending the current state of the track being listened to
      *
-     * @param int|string $trackId Уникальный идентификатор трека
-     * @param string $from Наименования клиента
-     * @param int|string $albumId Уникальный идентификатор альбома
-     * @param int|null $playlistId Уникальный идентификатор плейлиста, если таковой прослушивается.
-     * @param bool $fromCache Проигрывается ли трек с кеша
-     * @param string|null $playId Уникальный идентификатор проигрывания
-     * @param int $trackLengthSeconds Продолжительность трека в секундах
-     * @param int $totalPlayedSeconds Сколько было всего воспроизведено трека в секундах
+     * @param int|string $trackId Unique track ID
+     * @param string $from Customer names
+     * @param int|null $playlistId The unique ID of the playlist, if one is being listened to.
+     * @param bool $fromCache Is the track playing from the cache
+     * @param string|null $playId Unique playback ID
+     * @param int $trackLengthSeconds Track duration in seconds
+     * @param int $totalPlayedSeconds How many tracks were played in total in seconds
      * @param int $endPositionSeconds Окончательное значение воспроизведенных секунд
-     * @param string|null $client_now Текущая дата и время клиента в ISO
+     * @param string|null $client_now The current date and time of the client in ISO (Y-m-d\TH:i:s.u\Z)
      *
      * @return stdClass
      *
      * @throws YandexMusicException
      */
-    private function playAudio(
+    public function playAudio(
         int|string $trackId,
         string $from,
-        int|string $albumId,
         int $playlistId = null,
         bool $fromCache = false,
         string $playId = null,
@@ -282,18 +280,17 @@ class Client
         $url = "/play-audio";
 
         $data = array(
-            'Track2-id' => $trackId,
+            'trackId' => $trackId,
             'from-cache' => $fromCache,
             'from' => $from,
             'play-id' => $playId,
             'uid' => $this->getUid(),
-            'timestamp' => (new DateTime())->format(DateTime::ATOM),
+            'timestamp' => (new DateTime())->format("Y-m-d\TH:i:s.u\Z"),
             'Track2-length-seconds' => $trackLengthSeconds,
             'total-played-seconds' => $totalPlayedSeconds,
             'end-position-seconds' => $endPositionSeconds,
-            'album-id' => $albumId,
             'playlist-id' => $playlistId,
-            'client-now' => (new DateTime())->format(DateTime::ATOM)
+            'client-now' => $client_now ?? (new DateTime())->format("Y-m-d\TH:i:s.u\Z")
         );
 
         return $this->post($url, $data);
