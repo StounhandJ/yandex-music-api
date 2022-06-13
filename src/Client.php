@@ -14,6 +14,7 @@ use StounhandJ\YandexMusicApi\Models\Album;
 use StounhandJ\YandexMusicApi\Models\Artist\Artist;
 use StounhandJ\YandexMusicApi\Models\Artist\ArtistBriefInfo;
 use StounhandJ\YandexMusicApi\Models\Feed;
+use StounhandJ\YandexMusicApi\Models\Genre;
 use StounhandJ\YandexMusicApi\Models\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Models\Queue;
 use StounhandJ\YandexMusicApi\Models\Station;
@@ -185,14 +186,13 @@ class Client
 
     /**
      * Getting genres of music
-     * TODO модель
-     * TODO СТОП
-     * @return array parsed json
+     *
+     * @return Genre[]
      * @throws YandexMusicException
      */
     public function genres(): array
     {
-        return $this->get("/genres")->result;
+        return Genre::deList($this, $this->get("/genres")->result);
     }
 
     /**
