@@ -17,6 +17,7 @@ use StounhandJ\YandexMusicApi\Models\Feed;
 use StounhandJ\YandexMusicApi\Models\Genre;
 use StounhandJ\YandexMusicApi\Models\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Models\Queue;
+use StounhandJ\YandexMusicApi\Models\Search;
 use StounhandJ\YandexMusicApi\Models\Station;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
@@ -312,15 +313,15 @@ class Client
     }
 
     /**
-     * Осуществление поиска по запросу и типу, получение результатов
+     * Performing search by query and type, obtaining results
      *
-     * @param string $text Текст запроса
-     * @param bool $noCorrect Без исправлений?
-     * @param string $type Среди какого типа искать (трек, плейлист, альбом, исполнитель)
-     * @param int $page Номер страницы
-     * @param bool $playlistInBest Выдавать ли плейлисты лучшим вариантом поиска
+     * @param string $text Request text
+     * @param bool $noCorrect Without corrections?
+     * @param string $type Among what type to look for (track, playlist, album, artist)
+     * @param int $page Page number
+     * @param bool $playlistInBest Whether to give out playlists is the best search option
      *
-     * @return mixed parsed json
+     * @return Search
      * @throws YandexMusicException
      */
     public function search(
@@ -329,26 +330,26 @@ class Client
         string $type = 'all',
         int $page = 0,
         bool $playlistInBest = true
-    ): mixed {
-        $url = $this->baseUrl . "/search"
+    ): Search {
+        $url = "/search"
             . "?text=$text"
             . "&nocorrect=$noCorrect"
             . "&type=$type"
             . "&page=$page"
             . "&playlist-in-best=$playlistInBest";
 
-        return $this->get($url)->result;
+        return new Search($this, $this->get($url)->result);
     }
 
     /**
-     * Получение подсказок по введенной части поискового запроса.
+     * Getting hints for the entered part of the search query.
      *
-     * @param string $part Часть поискового запроса
+     * @param string $part Part of the search query
      *
-     * @return mixed parsed json
+     * @return array
      * @throws YandexMusicException
      */
-    public function searchSuggest(string $part): mixed
+    public function searchSuggest(string $part): array
     {
         return $this->get("/search/suggest?part=$part")->result;
     }
@@ -383,7 +384,7 @@ class Client
      * @param string $title Title
      * @param string $visibility Access Modifier (public, private)
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
+     * @return Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsCreate(string $title, string $visibility = 'public'): Playlist
@@ -785,7 +786,7 @@ class Client
     /**
      * Getting personal user playlists
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
+     * @return Playlist[]
      * @throws YandexMusicException
      */
     public function usersPlaylistsList(): array
