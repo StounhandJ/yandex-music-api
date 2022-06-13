@@ -5,6 +5,7 @@ namespace StounhandJ\YandexMusicApi;
 use DateTime;
 use DateTimeInterface;
 use stdClass;
+use StounhandJ\YandexMusicApi\Enum\LandingBlock;
 use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Models\Account\AccountSetting;
 use StounhandJ\YandexMusicApi\Models\Account\AccountStatus;
@@ -163,12 +164,12 @@ class Client
      * Supported block types: personalplaylists, promotions, new-releases, new-playlists,
      * mixes, chart, artists, albums, playlists, play_contexts.
      * TODO сделать enum и модель
-     * @param array|string $blocks
+     * @param LandingBlock|string|string[]|LandingBlock[] $blocks
      *
      * @return mixed parsed json
      * @throws YandexMusicException
      */
-    public function landing(array|string $blocks): mixed
+    public function landing(LandingBlock|string|array $blocks): mixed
     {
         $url = "/landing3?blocks=";
 
@@ -178,14 +179,7 @@ class Client
             $url .= $blocks;
         }
 
-        $response = $this->get($url);
-        if ($response->result == null) {
-            $response = $response->error;
-        } else {
-            $response = $response->result;
-        }
-
-        return $response;
+        return $this->get($url)->result->blocks;
     }
 
     /**
