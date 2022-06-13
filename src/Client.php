@@ -69,7 +69,7 @@ class Client
      */
     public function accountSettings(): AccountSetting
     {
-        return new AccountSetting($this, $this->get("/Account/settings")->result);
+        return new AccountSetting($this, $this->get("/account/settings")->result);
     }
 
     /**
@@ -80,7 +80,7 @@ class Client
      */
     public function accountStatus(): AccountStatus
     {
-        return new AccountStatus($this, $this->get("/Account/status")->result);
+        return new AccountStatus($this, $this->get("/account/status")->result);
     }
 
     /**
@@ -228,10 +228,10 @@ class Client
     }
 
     /**
-     * Получение прямой ссылки на загрузку из XML ответа
+     * Getting a direct download link from an XML response
      *
-     * Метод доступен только одну минуту с момента
-     * получения информации загрузке, иначе 410 ошибка!
+     * The method is available only one minute from the moment
+     * getting the download information, otherwise 410 error!
      *
      * @param string $url xml-файл с информацией
      * @param string $codec Кодек файла
@@ -299,16 +299,16 @@ class Client
     }
 
     /**
-     * Получение альбома по его уникальному идентификатору вместе с треками
+     * Getting an album by its unique ID along with tracks
      *
-     * @param int|string $albumId Уникальный идентификатор альбома
+     * @param int|string $albumId Unique Album ID
      *
-     * @return mixed parsed json
+     * @return Album
      * @throws YandexMusicException
      */
-    public function albumsWithTracks(int|string $albumId): mixed
+    public function albumWithTracks(int|string $albumId): Album
     {
-        return $this->get("/albums/$albumId/with-tracks")->result;
+        return new Album($this, $this->get("/albums/$albumId/with-tracks")->result);
     }
 
     /**
