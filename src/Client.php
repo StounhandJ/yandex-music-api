@@ -22,6 +22,7 @@ use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 use StounhandJ\YandexMusicApi\Models\Track\Track;
+use StounhandJ\YandexMusicApi\Models\Track\TracksDownloadInfo;
 use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
 
 class Client
@@ -63,7 +64,7 @@ class Client
     /**
      * Returns information about the current Account setting
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Account\AccountSetting
+     * @return AccountSetting
      * @throws YandexMusicException
      */
     public function accountSettings(): AccountSetting
@@ -74,7 +75,7 @@ class Client
     /**
      * Getting Account status
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Account\AccountStatus decoded json
+     * @return AccountStatus decoded json
      * @throws YandexMusicException
      */
     public function accountStatus(): AccountStatus
@@ -85,7 +86,7 @@ class Client
     /**
      * Getting a list of all queues at the moment
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Queue[] decoded json
+     * @return Queue[] decoded json
      * @throws YandexMusicException
      */
     public function queuesList(): array
@@ -97,7 +98,7 @@ class Client
      * Getting a specific queue
      *
      * @param $id string Queue Identifier
-     * @return \StounhandJ\YandexMusicApi\Models\Queue decoded json
+     * @return Queue decoded json
      * @throws YandexMusicException
      */
     public function queue(string $id): Queue
@@ -108,7 +109,7 @@ class Client
     /**
      * Getting rotor Account status
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Account\RotorAccountStatus
+     * @return RotorAccountStatus
      * @throws YandexMusicException
      */
     public function rotorAccountStatus(): RotorAccountStatus
@@ -196,41 +197,34 @@ class Client
     }
 
     /**
-     * Получение информации о доступных вариантах загрузки трека
+     * Getting information about available track loading options
      *
-     * @param int|string $trackId Уникальный идентификатор трека
-     * @param bool $getDirectLinks Получить ли при вызове метода прямую ссылку на загрузку
+     * @param int|string $trackId Unique track ID
+     * @param bool $getDirectLinks Whether to get a direct download link when calling the method
      *
-     * @return array parsed json
+     * @return TracksDownloadInfo[]
      * @throws YandexMusicException
      */
     public function tracksDownloadInfo(int|string $trackId, bool $getDirectLinks = false): array
     {
-        $result = array();
         $url = "/tracks/$trackId/download-info";
 
-        $response = $this->get($url);
-        if ($response->result == null) {
-            $result = $response->error;
-        } else {
-            if ($getDirectLinks) {
-                foreach ($response->result as $item) {
-                    if ($item->codec == 'mp3') {
-                        $item->directLink = $this->getDirectLink(
-                            $item->downloadInfoUrl,
-                            $item->codec,
-                            $item->bitrateInKbps
-                        );
-                        unset($item->downloadInfoUrl);
-                        $result[] = $item;
-                    }
+        $result = $this->get($url)->result;
+
+        if ($getDirectLinks) {
+            foreach ($result as $item) {
+                if ($item->codec == 'mp3') {
+                    $item->directLink = $this->getDirectLink(
+                        $item->downloadInfoUrl,
+                        $item->codec,
+                        $item->bitrateInKbps
+                    );
+                    unset($item->downloadInfoUrl);
                 }
-            } else {
-                $result = $response->result;
             }
         }
 
-        return $result;
+        return TracksDownloadInfo::deList($this, $result);
     }
 
     /**
@@ -365,7 +359,7 @@ class Client
      * @param array|int|string $kind The unique ID of the user's playlist
      * @param int|null $userId The unique ID of the user who owns the playlist
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
+     * @return Playlist[]
      * @throws YandexMusicException
      */
     public function usersPlaylists(array|int|string $kind, int $userId = null): array
@@ -432,7 +426,7 @@ class Client
      * @param int|string $kind The unique ID of the user's playlist
      * @param string $name New name
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
+     * @return Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsNameChange(int|string $kind, string $name): Playlist
@@ -487,7 +481,7 @@ class Client
      * @param int $at Index to insert
      * @param int|null $revision Action number
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
+     * @return Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsInsertTrack(
@@ -577,7 +571,7 @@ class Client
      *
      * @param int|string $artistId
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Artist\ArtistBriefInfo
+     * @return ArtistBriefInfo
      * @throws YandexMusicException
      */
     public function artistsBriefInfo(int|string $artistId): ArtistBriefInfo
@@ -744,7 +738,7 @@ class Client
      * Getting artists by IDs
      *
      * @param array|int|string $artistIds
-     * @return \StounhandJ\YandexMusicApi\Models\Artist\Artist[]
+     * @return Artist[]
      * @throws YandexMusicException
      */
     public function artists(array|int|string $artistIds): array
@@ -756,7 +750,7 @@ class Client
      * Getting albums by IDs
      *
      * @param array|int|string $albumIds
-     * @return \StounhandJ\YandexMusicApi\Models\Album[]
+     * @return Album[]
      * @throws YandexMusicException
      */
     public function albums(array|int|string $albumIds): array
@@ -839,7 +833,7 @@ class Client
     /**
      * Getting the albums you like
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Album[]
+     * @return Album[]
      * @throws YandexMusicException
      */
     public function getLikesAlbums(): array
@@ -850,7 +844,7 @@ class Client
     /**
      * Getting the artists you like
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Artist\Artist[]
+     * @return Artist[]
      * @throws YandexMusicException
      */
     public function getLikesArtists(): array
@@ -861,7 +855,7 @@ class Client
     /**
      * Getting playlists you like
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
+     * @return Playlist[]
      * @throws YandexMusicException
      */
     public function getLikesPlaylists(): array
@@ -945,7 +939,7 @@ class Client
      * Getting a Supplement Track2
      *
      * @param int|string $trackId
-     * @return \StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement
+     * @return Supplement
      * @throws YandexMusicException
      */
     public function trackSupplement(int|string $trackId): Supplement

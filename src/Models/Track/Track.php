@@ -4,6 +4,7 @@ namespace StounhandJ\YandexMusicApi\Models\Track;
 
 use stdClass;
 use StounhandJ\YandexMusicApi\Client;
+use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Models\JSONObject;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
@@ -11,6 +12,7 @@ use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 
 class Track extends JSONObject
 {
+    //TODO добавить скачивание трека
     protected string $trackId;
     public string $id;
     public string $realId;
@@ -36,6 +38,7 @@ class Track extends JSONObject
 
     /**
      * @return Lyric
+     * @throws YandexMusicException
      */
     public function getLyric(): Lyric
     {
@@ -47,7 +50,8 @@ class Track extends JSONObject
     }
 
     /**
-     * @return \StounhandJ\YandexMusicApi\Models\Track\Supplement\Video[]
+     * @return Video[]
+     * @throws YandexMusicException
      */
     public function getVideos(): array
     {
