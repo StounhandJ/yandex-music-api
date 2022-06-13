@@ -4,7 +4,7 @@ namespace StounhandJ\YandexMusicApi\Models\Artist;
 
 use StounhandJ\YandexMusicApi\Models\Album;
 use StounhandJ\YandexMusicApi\Models\JSONObject;
-use StounhandJ\YandexMusicApi\Models\Playlist;
+use StounhandJ\YandexMusicApi\Models\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 use StounhandJ\YandexMusicApi\Models\Track\Track;
 
@@ -82,7 +82,7 @@ class ArtistBriefInfo extends JSONObject
     }
 
     /**
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
      */
     public function getPlaylists(): array
     {

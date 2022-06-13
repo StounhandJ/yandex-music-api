@@ -13,7 +13,8 @@ use StounhandJ\YandexMusicApi\Models\Account\RotorAccountStatus;
 use StounhandJ\YandexMusicApi\Models\Album;
 use StounhandJ\YandexMusicApi\Models\Artist\Artist;
 use StounhandJ\YandexMusicApi\Models\Artist\ArtistBriefInfo;
-use StounhandJ\YandexMusicApi\Models\Playlist;
+use StounhandJ\YandexMusicApi\Models\Feed;
+use StounhandJ\YandexMusicApi\Models\Playlist\Playlist;
 use StounhandJ\YandexMusicApi\Models\Queue;
 use StounhandJ\YandexMusicApi\Models\Station;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Lyric;
@@ -137,15 +138,15 @@ class Client
     }
 
     /**
-     * Получение потока информации (фида) подобранного под пользователя.
-     * Содержит умные плейлисты.
-     * TODO Подготовить модель
-     * @return array decoded json
+     * Getting a stream of information (feed) tailored to the user.
+     * Contains smart playlists.
+     *
+     * @return Feed
      * @throws YandexMusicException
      */
-    public function feed(): array
+    public function feed(): Feed
     {
-        return $this->get("/feed")->result;
+        return new Feed($this, $this->get("/feed")->result);
     }
 
     /**
@@ -163,7 +164,7 @@ class Client
      *
      * Supported block types: personalplaylists, promotions, new-releases, new-playlists,
      * mixes, chart, artists, albums, playlists, play_contexts.
-     * TODO сделать enum и модель
+     * TODO Разбить на методы
      * @param LandingBlock|string|string[]|LandingBlock[] $blocks
      *
      * @return mixed parsed json
@@ -364,7 +365,7 @@ class Client
      * @param array|int|string $kind The unique ID of the user's playlist
      * @param int|null $userId The unique ID of the user who owns the playlist
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
      * @throws YandexMusicException
      */
     public function usersPlaylists(array|int|string $kind, int $userId = null): array
@@ -388,7 +389,7 @@ class Client
      * @param string $title Title
      * @param string $visibility Access Modifier (public, private)
      *
-     * @return Playlist
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsCreate(string $title, string $visibility = 'public'): Playlist
@@ -431,7 +432,7 @@ class Client
      * @param int|string $kind The unique ID of the user's playlist
      * @param string $name New name
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsNameChange(int|string $kind, string $name): Playlist
@@ -486,7 +487,7 @@ class Client
      * @param int $at Index to insert
      * @param int|null $revision Action number
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist
      * @throws YandexMusicException
      */
     public function usersPlaylistsInsertTrack(
@@ -790,7 +791,7 @@ class Client
     /**
      * Getting personal user playlists
      *
-     * @return Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
      * @throws YandexMusicException
      */
     public function usersPlaylistsList(): array
@@ -860,7 +861,7 @@ class Client
     /**
      * Getting playlists you like
      *
-     * @return \StounhandJ\YandexMusicApi\Models\Playlist[]
+     * @return \StounhandJ\YandexMusicApi\Models\Playlist\Playlist[]
      * @throws YandexMusicException
      */
     public function getLikesPlaylists(): array
