@@ -12,7 +12,6 @@ use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 
 class Track extends JSONObject
 {
-    //TODO добавить скачивание трека
     protected string $trackId;
     public string $id;
     public string $realId;
@@ -35,6 +34,51 @@ class Track extends JSONObject
     public array $major;
     public array $lyricsInfo;
     private Supplement $supplement;
+
+    /**
+     * @var TracksDownloadInfo[]
+     */
+    private array $tracksDownloadInfo;
+
+    /**
+     * @return TracksDownloadInfo[]
+     * @throws YandexMusicException
+     */
+    public function getTracksDownloadInfo(): array
+    {
+        $this->restoringTrack();
+        if (!isset($this->tracksDownloadInfo)) {
+            $this->tracksDownloadInfo = $this->client->tracksDownloadInfo($this->id, true);
+        }
+
+        return $this->tracksDownloadInfo;
+    }
+
+    /**
+     * @return int[]
+     * @throws YandexMusicException
+     */
+    public function getBitrates(): array
+    {
+        return array_map(fn($v): int => $v->bitrateInKbps, $this->getTracksDownloadInfo());
+    }
+
+    /**
+     * File Download
+     *
+     * @param string $name Name or path of the saved file
+     * @param int $bitrateInKbps The desired bitrate
+     * @return bool|int
+     * @throws YandexMusicException
+     */
+    public function download(string $name, int $bitrateInKbps = 320): bool|int
+    {
+        $trackDownloadInfoIndex = current(array_filter($this->getTracksDownloadInfo(),fn($v): int => $v->bitrateInKbps == $bitrateInKbps));
+        if (!$trackDownloadInfoIndex) {
+            return false;
+        }
+        return $this->client->download($trackDownloadInfoIndex->getDownloadLink(), $name);
+    }
 
     /**
      * @return Lyric

@@ -981,7 +981,7 @@ class Client
     }
 
     /**
-     * File Upload
+     * File Download
      *
      * @param string $url Link to the file
      * @param string $name Name or path of the saved file

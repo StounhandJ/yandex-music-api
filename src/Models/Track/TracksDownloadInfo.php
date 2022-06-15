@@ -12,9 +12,35 @@ class TracksDownloadInfo extends JSONObject
     public bool $gain;
     public bool $preview;
     public string $downloadInfoUrl;
-    public string $directLink; //TODO Добавить его получение из downloadInfoUrl
+    protected string $directLink;
     public bool $direct;
     public int $bitrateInKbps;
+
+    /**
+     * Getting a download link
+     *
+     * @return string
+     */
+    public function getDownloadLink(): string
+    {
+        if (!isset($this->directLink))
+        {
+            $this->directLink = $this->client->getDirectLink($this->downloadInfoUrl);
+        }
+
+        return $this->directLink;
+    }
+
+    /**
+     * File Download
+     *
+     * @param string $name Name or path of the saved file
+     * @return bool|int
+     */
+    public function download(string $name): bool|int
+    {
+        return $this->client->download($this->getDownloadLink(), $name);
+    }
 
     /**
      * @param Client $client
