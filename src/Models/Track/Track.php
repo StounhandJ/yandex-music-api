@@ -64,20 +64,43 @@ class Track extends JSONObject
     }
 
     /**
-     * File Download
+     * Download Track
      *
      * @param string $name Name or path of the saved file
      * @param int $bitrateInKbps The desired bitrate
      * @return bool|int
      * @throws YandexMusicException
      */
-    public function download(string $name, int $bitrateInKbps = 320): bool|int
+    public function downloadTrack(string $name, int $bitrateInKbps = 320): bool|int
     {
-        $trackDownloadInfoIndex = current(array_filter($this->getTracksDownloadInfo(),fn($v): int => $v->bitrateInKbps == $bitrateInKbps));
+        $trackDownloadInfoIndex = current(
+            array_filter($this->getTracksDownloadInfo(), fn($v): int => $v->bitrateInKbps == $bitrateInKbps)
+        );
         if (!$trackDownloadInfoIndex) {
             return false;
         }
         return $this->client->download($trackDownloadInfoIndex->getDownloadLink(), $name);
+    }
+
+    /**
+     * Download Img
+     *
+     * @param string $name Name or path of the saved file
+     * @param int $format Image format (50, 100, 150, 200, 300, 400, 600, 800, 1000)
+     * @return bool|int
+     * @throws YandexMusicException
+     */
+    public function downloadImg(string $name, int $format = 400): bool|int
+    {
+        $this->restoringTrack();
+
+        $url = "https://".$this->ogImage;
+        $format = sprintf("%sx%s", $format, $format);
+
+        return $this->client->download(
+            str_replace("%%", $format, $url),
+            $name
+        );
     }
 
     /**
@@ -106,12 +129,18 @@ class Track extends JSONObject
         return $this->supplement->videos;
     }
 
+    /**
+     * @throws YandexMusicException
+     */
     public function trackFullId(): string
     {
         $this->restoringTrack();
         return "{$this->id}:{$this->albums[0]->id}";
     }
 
+    /**
+     * @throws YandexMusicException
+     */
     private function restoringTrack()
     {
         if (!isset($this->id)) {
@@ -119,6 +148,10 @@ class Track extends JSONObject
         }
     }
 
+    /**
+     * @return void
+     * @throws YandexMusicException
+     */
     public function update(): void
     {
         if (isset($this->id)) {
