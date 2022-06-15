@@ -122,10 +122,10 @@ class RequestYandexAPI
     }
 
     /**
-     * Загрузка трека по direct url
+     * File Upload
      *
-     * @param string $url Ссылка на файл
-     * @param string $name Название сохраняемого файла
+     * @param string $url Link to the file
+     * @param string $name Name or path of the saved file
      * @return bool|int
      */
     public function download(string $url, string $name): bool|int

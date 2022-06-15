@@ -979,5 +979,17 @@ class Client
             $this->requestYandexAPI->get($this->baseUrl . $url)
         );
     }
+
+    /**
+     * File Upload
+     *
+     * @param string $url Link to the file
+     * @param string $name Name or path of the saved file
+     * @return bool|int
+     */
+    public function download(string $url, string $name): bool|int
+    {
+        return $this->requestYandexAPI->download($url, $name);
+    }
 }
 
