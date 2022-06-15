@@ -286,7 +286,7 @@ class Client
             'play-id' => $playId,
             'uid' => $this->getUid(),
             'timestamp' => (new DateTime())->format("Y-m-d\TH:i:s.u\Z"),
-            'Track2-length-seconds' => $trackLengthSeconds,
+            'track-length-seconds' => $trackLengthSeconds,
             'total-played-seconds' => $totalPlayedSeconds,
             'end-position-seconds' => $endPositionSeconds,
             'playlist-id' => $playlistId,
@@ -473,9 +473,9 @@ class Client
     }
 
     /**
-     * Adding a Track2 to a playlist
+     * Adding a track to a playlist
      * @param int|string $kind The unique ID of the user's playlist
-     * @param int|string $trackId Unique Track2 ID
+     * @param int|string $trackId Unique track ID
      * @param int $at Index to insert
      * @param int|null $revision Action number
      *
@@ -606,11 +606,11 @@ class Client
 
         $response = $this->post($url, $data)->result;
 
-        return $objectType == 'Track2' ? $response->revision : $response;
+        return $objectType == 'track' ? $response->revision : $response;
     }
 
     /**
-     * Adding a Track2 to a favorite
+     * Adding a track to a favorite
      *
      * @param array|int|string $trackIds
      * @return int Action number
@@ -618,11 +618,11 @@ class Client
      */
     public function usersLikesTracksAdd(array|int|string $trackIds): int
     {
-        return $this->likeAction('Track2', $trackIds);
+        return $this->likeAction('track', $trackIds);
     }
 
     /**
-     * Deleting a Track2 from a favorite
+     * Deleting a track from a favorite
      *
      * @param array|int|string $trackIds
      * @return int Action number
@@ -630,7 +630,7 @@ class Client
      */
     public function usersLikesTracksRemove(array|int|string $trackIds): int
     {
-        return $this->likeAction('Track2', $trackIds, true);
+        return $this->likeAction('track', $trackIds, true);
     }
 
     /**
@@ -765,7 +765,7 @@ class Client
      */
     public function tracks(array|int|string $trackIds): array
     {
-        return Track::deList($this, $this->getList('Track2', $trackIds));
+        return Track::deList($this, $this->getList('track', $trackIds));
     }
 
     /**
@@ -799,7 +799,7 @@ class Client
     /**
      * Getting the objects you like
      *
-     * @param string $objectType Track2, album, artist, playlist
+     * @param string $objectType track, album, artist, playlist
      *
      * @return array decoded json
      * @throws YandexMusicException
@@ -814,7 +814,7 @@ class Client
 
         $response = $this->get($url)->result;
 
-        return $objectType == "Track2" ? $response->library : $response;
+        return $objectType == "track" ? $response->library : $response;
     }
 
     /**
@@ -825,7 +825,7 @@ class Client
      */
     public function getLikesTracks(): array
     {
-        return Track::deList($this, $this->getLikes('Track2'));
+        return Track::deList($this, $this->getLikes('track'));
     }
 
     /**
@@ -903,14 +903,14 @@ class Client
         );
 
         $data = array(
-            'Track2-ids' => $ids
+            'track-ids' => $ids
         );
 
         return $this->post($url, $data)->result->revision;
     }
 
     /**
-     * Adding a Track2 to the disliked list
+     * Adding a track to the disliked list
      *
      * @param array|int|string $trackIds
      * @return int Action Number
@@ -922,7 +922,7 @@ class Client
     }
 
     /**
-     * Deleting a Track2 from the disliked list
+     * Deleting a track from the disliked list
      *
      * @param array|int|string $trackIds
      * @return int Action Number
@@ -934,7 +934,7 @@ class Client
     }
 
     /**
-     * Getting a Supplement Track2
+     * Getting a Supplement track
      *
      * @param int|string $trackId
      * @return Supplement
