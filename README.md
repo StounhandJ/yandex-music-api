@@ -9,7 +9,7 @@ $token = "AQAAAAANDd5rMAG1XnIKIEVVMGV4ibf8kw3FeA1";
 $client = new Client($token);
 
 foreach ($client->getLikesTracks() as $track){
-    echo $test1->title;
+    echo $track->title;
 }
 ```
 
