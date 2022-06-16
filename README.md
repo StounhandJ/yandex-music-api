@@ -1,15 +1,27 @@
-# yandex-music-api
-Php lib for Yandex.Music. Big thx @MarshalX
+# YandexMusic API
 
-## login example
+## Example get  likes tracks
 
 ```php
-$token = "";
+use StounhandJ\YandexMusicApi\Client;
 
+$token = "AQAAAAANDd5rMAG1XnIKIEVVMGV4ibf8kw3FeA1";
 $client = new Client($token);
-$account = $client->getAccount();
-if($account == null){
-    $client->fromCredentials("username", "paassword" , true);
-    // this will print the token
+
+foreach ($client->getLikesTracks() as $track){
+    echo $test1->title;
 }
+```
+
+## Example of downloading the first track from the album you like
+
+```php
+use StounhandJ\YandexMusicApi\Client;
+
+$token = "AQAAAAANDd5rMAG1XnIKIEVVMGV4ibf8kw3FeA1";
+$client = new Client($token);
+
+$likesAlbum = $client->getLikesAlbums()[0];
+$firstTrack = $likesAlbum->getTracks()[0];
+$result = $firstTrack->downloadTrack("test.mp3");
 ```
