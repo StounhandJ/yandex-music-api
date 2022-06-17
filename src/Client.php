@@ -24,7 +24,7 @@ use StounhandJ\YandexMusicApi\Models\Track\Supplement\Supplement;
 use StounhandJ\YandexMusicApi\Models\Track\Supplement\Video;
 use StounhandJ\YandexMusicApi\Models\Track\Track;
 use StounhandJ\YandexMusicApi\Models\Track\TracksDownloadInfo;
-use StounhandJ\YandexMusicApi\Utils\RequestYandexAPI;
+use StounhandJ\YandexMusicApi\Utils2\RequestYandexAPI;
 
 class Client
 {

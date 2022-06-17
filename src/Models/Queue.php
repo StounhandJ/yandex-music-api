@@ -4,6 +4,7 @@ namespace StounhandJ\YandexMusicApi\Models;
 
 use stdClass;
 use StounhandJ\YandexMusicApi\Client;
+use StounhandJ\YandexMusicApi\Exception\YandexMusicException;
 use StounhandJ\YandexMusicApi\Models\Track\Track;
 
 class Queue extends JSONObject
@@ -17,6 +18,7 @@ class Queue extends JSONObject
     /**
      * @param bool $force
      * @return Track[]
+     * @throws YandexMusicException
      */
     public function getTracks(bool $force = false): array
     {
@@ -45,6 +47,7 @@ class Queue extends JSONObject
     /**
      * @param bool $force
      * @return int|array
+     * @throws YandexMusicException
      */
     public function getCurrentIndex(bool $force = false): int|array
     {

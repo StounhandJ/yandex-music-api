@@ -1,6 +1,6 @@
 <?php
 
-namespace StounhandJ\YandexMusicApi\Utils;
+namespace StounhandJ\YandexMusicApi\Utils2;
 
 class Utils
 {
