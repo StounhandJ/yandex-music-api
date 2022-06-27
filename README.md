@@ -1,5 +1,25 @@
 # YandexMusic API
 
+<p align="center">
+<a href="https://packagist.org/packages/stounhandj/yandex-music-api"><img src="https://img.shields.io/packagist/dt/stounhandj/yandex-music-api" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/stounhandj/yandex-music-api"><img src="https://img.shields.io/packagist/v/stounhandj/yandex-music-api" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/stounhandj/yandex-music-api"><img src="https://img.shields.io/packagist/l/stounhandj/yandex-music-api" alt="License"></a>
+</p>
+
+### Not an official package for working with the Yandex API.
+## Installation
+
+```
+$ composer require stounhandj/yandex-music-api
+```
+Or
+```json
+{
+    "require": {
+        "stounhandj/yandex-music-api": "^0.5.2"
+    }
+}
+```
 ## Example get  likes tracks
 
 ```php
